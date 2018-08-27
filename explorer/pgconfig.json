@@ -1,0 +1,9 @@
+{
+	"pg": {
+		"host": "postgresql.zjhl.com",
+		"port": "5432",
+		"database": "fabricexplorer",
+		"username": "hppoc",
+		"passwd": "password"
+	}
+}

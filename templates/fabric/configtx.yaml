@@ -1,0 +1,87 @@
+---
+# 确保通道内的节点软件版本一致
+Capabilities:
+    # 适用于 channel 内的 orderer 和 peer 集群
+    Global: &ChannelCapabilities
+        V1_1: true
+
+    # 适用于 orderer 集群
+    Orderer: &OrdererCapabilities
+        V1_1: true
+
+    # 适用于 peer 集群
+    Application: &ApplicationCapabilities
+        V1_1: true
+
+# 被引用的不同的组织标识
+Organizations:
+    - &{{ORDERERS_DOMAIN}}Org
+        Name: {{ORDERERS_DOMAIN}}Org
+        # load MSP 使用的 ID
+        ID: {{ORDERERS_DOMAIN}}MSP
+        # 由 cryptogen 工具生成的 MSP 配置文件路径
+        MSPDir: crypto-config/ordererOrganizations/{{ORDERERS_DOMAIN}}.com/msp
+
+    - &{{ZJHL_DOMAIN}}Org
+        Name: {{ZJHL_DOMAIN}}MSP
+        ID: {{ZJHL_DOMAIN}}MSP
+        MSPDir: crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/msp
+        # 定义 peer 组织的锚节点（可用于跨组织 gossip 通信的 peer 的位置）
+        AnchorPeers:
+            - Host: peer0.{{ZJHL_DOMAIN}}.com
+              Port: 7051
+
+Orderer: &OrdererDefaults
+    OrdererType: kafka
+    Addresses:
+        - orderer0.{{ORDERERS_DOMAIN}}.com:7050
+        - orderer1.{{ORDERERS_DOMAIN}}.com:7050
+        - orderer2.{{ORDERERS_DOMAIN}}.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - kafka0.{{ORDERERS_DOMAIN}}.com:9092
+            - kafka1.{{ORDERERS_DOMAIN}}.com:9092
+            - kafka2.{{ORDERERS_DOMAIN}}.com:9092
+            - kafka3.{{ORDERERS_DOMAIN}}.com:9092
+    Organizations:
+
+# peer 节点应用
+Application: &ApplicationDefaults
+    Organizations:
+
+Profiles:
+    # orderer 集群
+    {{ORDERERS_DOMAIN}}OrgGenesis:
+        Capabilities:
+            <<: *ChannelCapabilities
+        # orderer 集群配置信息
+        Orderer:
+            <<: *OrdererDefaults
+            # 参与到 orderer 集群的组织信息
+            Organizations:
+                - *{{ORDERERS_DOMAIN}}Org
+            Capabilities:
+                <<: *OrdererCapabilities
+        # orderer 集群所服务的组织联盟列表
+        Consortiums:
+            # 组织联盟 SampleConsortium 的信息
+            SampleConsortium:
+                # 参与联盟的 peer 组织
+                Organizations:
+                    - *{{ZJHL_DOMAIN}}Org
+    # 应用通道模版
+    {{ZJHL_DOMAIN}}OrgChannel:
+        # 应用通道所关联联盟的名称
+        Consortium: SampleConsortium
+        # 应用通道的信息
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *{{ZJHL_DOMAIN}}Org
+            Capabilities:
+                <<: *ApplicationCapabilities

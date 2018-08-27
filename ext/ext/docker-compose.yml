@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  ext:
+    image: hyperledger/tools:${FABRIC_VERSION}
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - GOPATH=/opt/gopath
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric
+      - CHANNEL_NAME=mychannel
+      - CORE_LOGGING_LEVEL=info
+    working_dir: /etc/hyperledger/fabric
+    command: 'cryptogen generate --config=./crypto-config.yaml && configtxgen -printOrg extMSP > ./channel-artifacts/ext.json'
+    volumes:
+      - ./crypto-config.yaml:/etc/hyperledger/fabric/crypto-config.yaml
+      - ./configtx.yaml:/etc/hyperledger/fabric/configtx.yaml
+      - ../crypto-config:/etc/hyperledger/fabric/crypto-config
+      - ../channel-artifacts:/etc/hyperledger/fabric/channel-artifacts

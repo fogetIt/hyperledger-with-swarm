@@ -1,0 +1,35 @@
+  zookeeper{{INDEX}}:
+    deploy:
+      replicas: 1
+# 多机部署时的重启策略
+      restart_policy:
+# none/on-failure/any(default)
+        condition: on-failure
+# 启动尝试之前等待时间
+        delay: 5s
+# 最大的重启尝试次数，默认是永不放弃
+        # max_attempts: 3
+# 对启动时间较长的容器，判断是否成功的“窗口期”
+        # window: 20s
+      placement:
+        constraints:
+          - node.hostname == {{MACHINE_NAME}}
+    image: hyperledger/fabric-zookeeper:${DEPEND_IMAGE_TAG}
+# 单机部署时的重启策略
+    # restart: always
+    environment:
+      - ZOO_MY_ID={{(INDEX+1)}}
+      - ZOO_SERVERS={{ZOO_SERVERS}}
+    # ports:
+    #   # 客户端与 zookeeper 交互的端口
+    #   - "{{(INDEX*10+2181)}}:2181"
+    #   # master 和 slave 之间的通信端口
+    #   - "{{(INDEX*10+2888)}}:2888"
+    #   # 选举 leader 的端口
+    #   - "{{(INDEX*10+3888)}}:3888"
+# Needed when docker stack deploy, I don't know why.
+    hostname: zookeeper{{INDEX}}.{{ORDERERS_DOMAIN}}.com
+    networks:
+      {{NETWORK_NAME}}:
+        aliases:
+          - zookeeper{{INDEX}}.{{ORDERERS_DOMAIN}}.com

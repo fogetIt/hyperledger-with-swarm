@@ -1,2 +1,11 @@
-/*
-!/.gitignore
+*.pyc
+*.log
+wait-for
+
+.svn/
+.idea/
+
+fabric/*.yml
+fabric/*.yaml
+!fabric/generate.log
+deploy.sh

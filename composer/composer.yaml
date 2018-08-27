@@ -1,0 +1,75 @@
+version: '3'
+
+networks:
+  hyperledger:
+    external:
+      name: ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME}
+
+services:
+  composer_cli:
+    image: hyperledger/composer-cli:${COMPOSER_VERSION}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+        delay: 10s
+        max_attempts: 1
+        window: 500s
+      placement:
+        constraints:
+          - node.hostname == ${NODE_HOSTNAME}
+    volumes:
+      - ./fabric-config:/home/composer/fabric-config
+      - ./644ApiDoc/forfaiting:/home/composer/forfaiting
+      - ./composer:/home/composer/.composer
+      - ./zjhl-secret:/home/composer/zjhl-secret
+      - ./zjhl.json:/home/composer/zjhl.json
+      - ./composer-cli.sh:/home/composer/composer-cli.sh
+      - ./endorsement-policy.json:/home/composer/endorsement-policy.json
+    working_dir: /home/composer
+    entrypoint: /bin/sh /home/composer/composer-cli.sh
+    networks:
+      - hyperledger
+
+  composer_playground:
+    image: hyperledger/composer-playground:${COMPOSER_VERSION}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+        delay: 10s
+        max_attempts: 1
+        window: 100s
+      placement:
+        constraints:
+          - node.hostname == ${NODE_HOSTNAME}
+    volumes:
+      - ./composer:/home/composer/.composer
+    working_dir: /home/composer
+    ports:
+      - "8080:8080"
+    networks:
+      - hyperledger
+
+  composer_rest_server:
+    image: hyperledger/composer-rest-server:${COMPOSER_VERSION}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+        delay: 10s
+        max_attempts: 1
+        window: 100s
+      placement:
+        constraints:
+          - node.hostname == ${NODE_HOSTNAME}
+    volumes:
+      - ./composer:/home/composer/.composer
+    working_dir: /home/composer
+    environment:
+      - COMPOSER_CARD=zjhl-secret@forfaiting
+      - COMPOSER_NAMESPACES=never
+    ports:
+      - "3000:3000"
+    networks:
+      - hyperledger

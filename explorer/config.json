@@ -1,0 +1,58 @@
+{
+    "network-config": {
+        "org{{ZJHL_DOMAIN}}": {
+            "name": "{{ZJHL_DOMAIN}}",
+            "mspid": "{{ZJHL_DOMAIN}}MSP",
+            "peer0": {
+                "requests": "grpcs://peer0.{{ZJHL_DOMAIN}}.com:7051",
+                "events": "grpcs://peer0.{{ZJHL_DOMAIN}}.com:7053",
+                "server-hostname": "peer0.{{ZJHL_DOMAIN}}.com",
+                "tls_cacerts": "/crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/peers/peer0.{{ZJHL_DOMAIN}}.com/tls/ca.crt"
+            },
+            "peer1": {
+                "requests": "grpcs://peer1.{{ZJHL_DOMAIN}}.com:7051",
+                "events": "grpcs://peer1.{{ZJHL_DOMAIN}}.com:7053",
+                "server-hostname": "peer1.{{ZJHL_DOMAIN}}.com",
+                "tls_cacerts": "/crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/peers/peer1.{{ZJHL_DOMAIN}}.com/tls/ca.crt"
+            },
+            "peer2": {
+                "requests": "grpcs://peer2.{{ZJHL_DOMAIN}}.com:7051",
+                "events": "grpcs://peer2.{{ZJHL_DOMAIN}}.com:7053",
+                "server-hostname": "peer2.{{ZJHL_DOMAIN}}.com",
+                "tls_cacerts": "/crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/peers/peer2.{{ZJHL_DOMAIN}}.com/tls/ca.crt"
+            },
+            "admin": {
+                "key": "/crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/users/Admin@{{ZJHL_DOMAIN}}.com/msp/keystore",
+                "cert": "/crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/users/Admin@{{ZJHL_DOMAIN}}.com/msp/signcerts"
+            }
+        }
+    },
+    "channel": "mychannel",
+    "orderers": [
+        {
+            "mspid": "{{ORDERERS_DOMAIN}}MSP",
+            "server-hostname": "orderer0.{{ORDERERS_DOMAIN}}.com",
+            "requests": "grpcs://orderer0.{{ORDERERS_DOMAIN}}.com:7050",
+            "tls_cacerts": "/crypto-config/ordererOrganizations/{{ORDERERS_DOMAIN}}.com/orderers/orderer0.{{ORDERERS_DOMAIN}}.com/tls/ca.crt"
+        },
+        {
+            "mspid": "{{ORDERERS_DOMAIN}}MSP",
+            "server-hostname": "orderer1.{{ORDERERS_DOMAIN}}.com",
+            "requests": "grpcs://orderer1.{{ORDERERS_DOMAIN}}.com:7050",
+            "tls_cacerts": "/crypto-config/ordererOrganizations/{{ORDERERS_DOMAIN}}.com/orderers/orderer1.{{ORDERERS_DOMAIN}}.com/tls/ca.crt"
+        },
+        {
+            "mspid": "{{ORDERERS_DOMAIN}}MSP",
+            "server-hostname": "orderer2.{{ORDERERS_DOMAIN}}.com",
+            "requests": "grpcs://orderer2.{{ORDERERS_DOMAIN}}.com:7050",
+            "tls_cacerts": "/crypto-config/ordererOrganizations/{{ORDERERS_DOMAIN}}.com/orderers/orderer2.{{ORDERERS_DOMAIN}}.com/tls/ca.crt"
+        }
+    ],
+    "keyValueStore": "/tmp/fabric-client-kvs",
+    "configtxgenToolPath": "/bin",
+    "SYNC_START_DATE_FORMAT": "YYYY/MM/DD",
+    "syncStartDate": "2018/07/25",
+    "eventWaitTime": "30000",
+    "license": "Apache-2.0",
+    "version": "1.1"
+}

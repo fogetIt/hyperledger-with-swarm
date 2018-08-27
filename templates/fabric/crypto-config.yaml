@@ -1,0 +1,21 @@
+OrdererOrgs:
+  - Name: {{ORDERERS_DOMAIN}}Org
+    Domain: {{ORDERERS_DOMAIN}}.com
+    Specs:
+      - Hostname: orderer0
+      - Hostname: orderer1
+      - Hostname: orderer2
+
+PeerOrgs:
+  - Name: {{ZJHL_DOMAIN}}Org
+    Domain: {{ZJHL_DOMAIN}}.com
+    EnableNodeOUs: true
+# 从 peer0.{{ZJHL_DOMAIN}}.com 开始，生成 3 套公私钥和证书
+    Template:
+      Count: 3
+# 每个 peer 有 1 个普通用户
+    Users:
+      Count: 1
+# Specs:
+#   - Hostname: peer0Zjhl
+#     CommonName: peer0.zjhl.com

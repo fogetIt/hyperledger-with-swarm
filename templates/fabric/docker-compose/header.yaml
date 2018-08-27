@@ -1,0 +1,57 @@
+version: '3.2'
+
+networks:
+  {{NETWORK_NAME}}:
+# external/name
+#   指定已经存在的网络，默认自动命名规则是 `前缀_名字`
+#   不会自动创建 network ，driver 等字段也不生效
+#   手动创建 network
+#     docker network create --attachable --driver overlay --attachable --subnet=10.200.1.0/24 ov_hyperledger
+    external:
+      name: ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME}
+
+# version3 service
+#   弃用 volumes_from,volume_driver
+#   采用 top-level volumes
+# volume 默认命名规则是 `前缀_名字`
+# 如果使用 external/name 指定名称，则不会自动创建 volume ，driver 等字段也不生效，需要手动创建
+#   docker volume create --driver vieux/sshfs -o sshcmd=manager:xxx/xxx -o password=tcuser xxx
+# volumes mount/bind mount
+#   docker service create 只能使用 --mount 而不能使用 -v ，--mount 默认是 bind
+#   主机目录会覆盖容器中的目录，（ volume 创建时）容器中已有文件不会同步到主机目录上
+#     volume mount
+#       用于独立容器
+#       会自动创建不存在的目录
+#     bind mount
+#       用于群集服务，也可以在独立容器上使用
+#       不会自动创建不存在的目录
+#       docker-compose version3 默认
+volumes:
+  {{ZJHL_DOMAIN}}_ca_volume:
+#     使用已经存在的数据卷
+    # external:
+    #   name: channel_artifacts
+#     driver 默认是 local ， vieux/sshfs 只能挂载目录
+    driver: vieux/sshfs
+    driver_opts:
+      sshcmd: ${USER}@${MANAGER_HOST}:${PWD}/crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/ca/
+      password: ${MANAGER_PASSWD}
+  {{ZJHL_DOMAIN}}_peers_volume:
+    driver: vieux/sshfs
+    driver_opts:
+      sshcmd: ${USER}@${MANAGER_HOST}:${PWD}/crypto-config/peerOrganizations/{{ZJHL_DOMAIN}}.com/peers/
+      password: ${MANAGER_PASSWD}
+  {{ORDERERS_DOMAIN}}_volume:
+    driver: vieux/sshfs
+    driver_opts:
+      sshcmd: ${USER}@${MANAGER_HOST}:${PWD}/crypto-config/ordererOrganizations/{{ORDERERS_DOMAIN}}.com/orderers/
+      password: ${MANAGER_PASSWD}
+  channel_artifacts:
+    driver: vieux/sshfs
+    driver_opts:
+      sshcmd: ${USER}@${MANAGER_HOST}:${PWD}/channel-artifacts/
+      password: ${MANAGER_PASSWD}
+  blockchains:
+  couchdb_data:
+
+services:

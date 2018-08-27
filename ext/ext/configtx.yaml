@@ -1,0 +1,8 @@
+Organizations:
+    - &{{DOMAIN}}Org
+        Name: {{DOMAIN}}MSP
+        ID: {{DOMAIN}}MSP
+        MSPDir: crypto-config/peerOrganizations/{{DOMAIN}}.com/msp
+        AnchorPeers:
+            - Host: peer0.{{DOMAIN}}.com
+              Port: 7051

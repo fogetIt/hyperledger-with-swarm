@@ -1,0 +1,131 @@
+{
+    "name": "zjhl",
+    "x-type": "hlfv1",
+    "x-commitTimeout": 1000,
+    "version": "1.0.0",
+    "client": {
+        "organization": "{{ZJHL_DOMAIN}}",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "1000",
+                    "eventHub": "1000",
+                    "eventReg": "1000"
+                },
+                "orderer": "1000"
+            }
+        }
+    },
+    "channels": {
+        "mychannel": {
+            "orderers": [
+                "orderer0.{{ORDERERS_DOMAIN}}.com",
+                "orderer1.{{ORDERERS_DOMAIN}}.com",
+                "orderer2.{{ORDERERS_DOMAIN}}.com"
+            ],
+            "peers": {
+                "peer0.{{ZJHL_DOMAIN}}.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                },
+                "peer1.{{ZJHL_DOMAIN}}.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                },
+                "peer2.{{ZJHL_DOMAIN}}.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                }
+            }
+        }
+    },
+    "organizations": {
+        "{{ZJHL_DOMAIN}}": {
+            "mspid": "{{ZJHL_DOMAIN}}MSP",
+            "peers": [
+                "peer0.{{ZJHL_DOMAIN}}.com",
+                "peer1.{{ZJHL_DOMAIN}}.com",
+                "peer2.{{ZJHL_DOMAIN}}.com"
+            ],
+            "certificateAuthorities": [
+                "ca.{{ZJHL_DOMAIN}}.com"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer0.{{ORDERERS_DOMAIN}}.com": {
+            "url": "grpcs://orderer0.{{ORDERERS_DOMAIN}}.com:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer0.{{ORDERERS_DOMAIN}}.com"
+            },
+            "tlsCACerts": {
+                "pem": "{{ORDERERS_CA_CERT}}"
+            }
+        },
+        "orderer1.{{ORDERERS_DOMAIN}}.com": {
+            "url": "grpcs://orderer1.{{ORDERERS_DOMAIN}}.com:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer1.{{ORDERERS_DOMAIN}}.com"
+            },
+            "tlsCACerts": {
+                "pem": "{{ORDERERS_CA_CERT}}"
+            }
+        },
+        "orderer2.{{ORDERERS_DOMAIN}}.com": {
+            "url": "grpcs://orderer2.{{ORDERERS_DOMAIN}}.com:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer2.{{ORDERERS_DOMAIN}}.com"
+            },
+            "tlsCACerts": {
+                "pem": "{{ORDERERS_CA_CERT}}"
+            }
+        }
+    },
+    "peers": {
+        "peer0.{{ZJHL_DOMAIN}}.com": {
+            "url": "grpcs://peer0.{{ZJHL_DOMAIN}}.com:7051",
+            "eventUrl": "grpcs://peer0.{{ZJHL_DOMAIN}}.com:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.{{ZJHL_DOMAIN}}.com"
+            },
+            "tlsCACerts": {
+                "pem": "{{ZJHL_CA_CERT}}"
+            }
+        },
+        "peer1.{{ZJHL_DOMAIN}}.com": {
+            "url": "grpcs://peer1.{{ZJHL_DOMAIN}}.com:7051",
+            "eventUrl": "grpcs://peer1.{{ZJHL_DOMAIN}}.com:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.{{ZJHL_DOMAIN}}.com"
+            },
+            "tlsCACerts": {
+                "pem": "{{ZJHL_CA_CERT}}"
+            }
+        },
+        "peer2.{{ZJHL_DOMAIN}}.com": {
+            "url": "grpcs://peer2.{{ZJHL_DOMAIN}}.com:7051",
+            "eventUrl": "grpcs://peer2.{{ZJHL_DOMAIN}}.com:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer2.{{ZJHL_DOMAIN}}.com"
+            },
+            "tlsCACerts": {
+                "pem": "{{ZJHL_CA_CERT}}"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.{{ZJHL_DOMAIN}}.com": {
+            "url": "https://ca.{{ZJHL_DOMAIN}}.com:7054",
+            "caName": "ca_{{ZJHL_DOMAIN}}",
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}

@@ -1,0 +1,45 @@
+  orderer{{INDEX}}:
+# version3 only
+# effect when docker stack deploy
+# ignored when docker-compose up/run
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      placement:
+        constraints:
+          - node.hostname == {{MACHINE_NAME}}
+    image: hyperledger/fabric-orderer:${FABRIC_IMAGE_TAG}
+# 定义专门存放环境变量的文件，默认同 yaml 文件路径下的 .env
+# docker-compose/docker stack 配置文件中的相对路径是相对 yaml 文件的路径
+# 如果 env_file 变量名称与 environment 指令冲突，则以后者为准
+    # env_file: .env
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=${LOG_LEVEL}
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_${NETWORK_NAME}
+      # - FABRIC_CFG_PATH=/etc/hyperledger/fabric
+      - ORDERER_GENERAL_GENESISFILE=/var/channel-artifacts/genesis.block
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/orderers-config/orderer{{INDEX}}.{{ORDERERS_DOMAIN}}.com/msp
+      - ORDERER_GENERAL_LOCALMSPID={{ORDERERS_DOMAIN}}MSP
+      # enable tls
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/orderers-config/orderer{{INDEX}}.{{ORDERERS_DOMAIN}}.com/tls/ca.crt]
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/orderers-config/orderer{{INDEX}}.{{ORDERERS_DOMAIN}}.com/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/orderers-config/orderer{{INDEX}}.{{ORDERERS_DOMAIN}}.com/tls/server.crt
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
+      - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    volumes:
+      - channel_artifacts:/var/channel-artifacts:readonly
+      - {{ORDERERS_DOMAIN}}_volume:/var/orderers-config:readonly
+    command: orderer
+    ports:
+      - "{{(INDEX*10+7050)}}:7050"
+    networks:
+      {{NETWORK_NAME}}:
+        aliases:
+          - orderer{{INDEX}}.{{ORDERERS_DOMAIN}}.com

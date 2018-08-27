@@ -1,0 +1,26 @@
+  couchdb{{INDEX}}_{{ZJHL_DOMAIN}}:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      placement:
+        constraints:
+# 部署到的物理节点的权限级别
+          # - node.role == manager/worker
+# 部署到的物理节点的节点名称
+          - node.hostname == {{MACHINE_NAME}}
+    image: hyperledger/fabric-couchdb:${DEPEND_IMAGE_TAG}
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    # ports:
+    #   - "{{(INDEX*10+5984)}}:5984"
+    volumes:
+      - type: volume
+        source: couchdb_data
+        target: /opt/couchdb/data
+    networks:
+      {{NETWORK_NAME}}:
+        aliases:
+          - couchdb{{INDEX}}.{{ZJHL_DOMAIN}}.com

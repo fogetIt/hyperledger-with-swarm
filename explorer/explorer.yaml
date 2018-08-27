@@ -1,0 +1,59 @@
+version: '3'
+
+networks:
+  hyperledger:
+    external:
+      name: ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME}
+
+services:
+  postgresql:
+    image: centos/postgresql-96-centos7:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+        delay: 10s
+        max_attempts: 1
+        window: 200s
+      placement:
+        constraints:
+          - node.hostname == ${NODE_HOSTNAME}
+    environment:
+      - POSTGRESQL_ADMIN_PASSWORD=psql
+    # volumes:
+    #   - ./pg_data:/var/lib/pgsql/data
+    networks:
+      hyperledger:
+        aliases:
+          - postgresql.zjhl.com
+
+  explorer:
+    image: hyperledger/explorer:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+        delay: 10s
+        max_attempts: 1
+        window: 200s
+      placement:
+        constraints:
+          - node.hostname == ${NODE_HOSTNAME}
+    environment:
+      - PGHOST=postgresql.zjhl.com
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=psql
+    volumes:
+      - ./wait-for:/blockchain-explorer/wait-for
+      - ./start.sh:/blockchain-explorer/start.sh
+      - ./configtxgen:/bin/configtxgen
+      - ./fabric-client-kvs:/tmp/fabric-client-kvs
+      - ./config.json:/blockchain-explorer/app/platform/fabric/config.json
+      - ./pgconfig.json:/blockchain-explorer/app/persistence/postgreSQL/db/pgconfig.json
+      - ~/fabric/crypto-config:/crypto-config
+    ports:
+      - "8090:8080"
+    # network_mode: "host"
+    networks:
+      - hyperledger
