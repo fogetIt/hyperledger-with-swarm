@@ -16,7 +16,7 @@
 
 :fabric-peer: 区块链节点
 
-    - peer 节点收到区块后，会对区块中的每笔交易进行校验，检查交易依赖的输入输出是否符合当前区块链的状态，完成后
+    - (commit)peer 节点收到区块后，会对区块中的每笔交易进行校验，检查交易依赖的输入输出是否符合当前区块链的状态，完成后
         - 将 leager 写入 blockfile
         - 修改 world state
 
@@ -33,8 +33,8 @@
     - 各个 peer 节点验证交易，并提交到本地账本中
 
 
-账本
-----------
+分布式账本
+---------------
 - 账本与 channel 是一对一的关系
 
 :leager:
@@ -44,10 +44,16 @@
         - 每个文件有大小限制，存储一定数量的区块
         - 每个区块包含一条或多条交易
 
-    :index: 存储在 peer 上的 LevelDB 数据库，记录区块索引
-    :world state: K-V 形式的世界状态数据库，提供给 chaincode 存取使用，用于快速查询当前状态
+    :block index: 存储在 peer 上的 LevelDB 数据库，记录区块索引（区块交易对应的文件块及其偏移）
 
-        - 可以使用 peer 内置的 LevelDB ，也可以外挂 CouchDB
+:world state: K-V 形式的世界状态数据库，提供给 chaincode 存取使用，用于快速查询当前状态
+
+    - 可以使用 peer 内置的 LevelDB ，也可以外挂 CouchDB
+
+:history index: 可选的历史状态数据库，用于查询某个 key 的历史修改记录
+
+    - 只存储 block 中有效交易相关的 key ，而不存储 value
+    - 后续需要查询的时候，根据变动历史去查询实际变动的值，这样的做法减少了数据的存储，也增加了查询逻辑的复杂度
 
 
 工具
@@ -65,10 +71,8 @@
 
     :configtxgen:
 
-        - 生成创世区块 orderer genesis block
-            - 用来给 Orderer 节点做排序服务
-        - 生成 channel configuration transaction
-            - 用来配置和创建 channel 的配置文件
+        - 生成创世区块 orderer genesis block ，用来给 Orderer 节点做排序服务
+        - 生成 channel configuration transaction ，用来配置和创建 channel 的配置文件
         - 生成组织锚节点 anchor peer transactions
 
     :configtxlator:
@@ -137,8 +141,13 @@ peer chaincode
         - VSCC(Validation system chaincode)
             - 处理交易校验，包括检查背书策略和版本在并发时的控制
     - 用户链码(ACC)
-        - 单独运行在一个 Docker 容器中，用来实现用户的应用功能
-        - 在链码部署的时候会自动生成 Docker 镜像
+        - 单独运行在一个 docker 容器中，用来实现用户的应用功能
+            - 在链码部署（实例化）的时候会自动生成 docker 镜像
+            - 防止代码错误或者恶意程序导致 peer 节点瘫痪
+            - 如果 docker 容器挂掉，（查询、实例化时）会自动启动一个新的
+            - 所有 peer 的交易和提案都会传递到链码容器来执行
+            - 链码被删除时容器也删除
+            - chaincode 只有在开发模式下才可以脱离容器环境
         - 支持采用 Go、Java、Nodejs 编写，并提供相应的中间层供链码使用
         - 可以使用 GetState 和 PutState 接口和 Peer 节点通信，存取 K-V 数据
 
@@ -156,3 +165,6 @@ msp
         :TLS根CA证书: 自签名的证书，用于 TLS（Transport Layer Security, 安全传输层协议）传输 （必须配置）
 
 - Fabirc 的成员身份基于标准的 X.509 证书，密钥使用 ECDSA 算法，通道内只有相同 MSP 内的节点才可以通过 Gossip 协议进行数据分发
+
+
+https://segmentfault.com/a/1190000015995379
