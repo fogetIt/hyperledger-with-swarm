@@ -79,7 +79,7 @@ chaincode_invoke ()
 	# while 'peer chaincode' command can get the orderer endpoint from the peer (if join was successful),
 	# lets supply it directly as we know it using the "-o" option
     peer chaincode invoke -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CA} -C ${CHANNEL_NAME} -n mycc ${PEER_CONN_PARMS} -c '{"Args":["invoke","a","b","10"]}'
-	info_log "Invoke transaction on ${peer}.${org} on channel '${CHANNEL_NAME}' is successful"
+	info_log "Invoke transaction on ${PEERS} on channel '${CHANNEL_NAME}' is successful"
 }
 info_log "Install chaincode 2.0 on orgs peer0..."
 (

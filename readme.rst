@@ -53,7 +53,19 @@
 
             :block data: 包含一条或多条交易
 
+                :transaction:
+
+                    :header: 一些关于交易事务的元数据，比如 chaincode 的名称、版本号
+                    :signature: 被客户端应用创建（使用客户端私钥生成），用来检验事务是否被篡改
+                    :proposal: 转换当前应用提供的参数，提供给 chaincode 运行，从而决定世界状态的改变
+                    :response: 捕获当前和之后的世界状态，如果交易成功验证，修改世界状态
+                    :endorsements:
+
             :block metadata:
+
+                - block 生成的时间
+                - block writer 的证书、公钥和签名
+                - committer 指定的有效/无效指标
 
             - 通过密码将所有的块连续到一起，使得数据非常安全，即使一个节点数据被篡改，它也无法说服其它节点
             - 创世块不包含任何交易，它包含交易配置信息（包含网络通道的初始状态）
