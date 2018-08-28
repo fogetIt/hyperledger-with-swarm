@@ -13,6 +13,7 @@ case ${1} in
             docker-machine start ext
             docker-machine regenerate-certs ext --force
         fi
+        docker-machine ssh ${NODE_HOSTNAME} 'if [ -d ext ]; then rm -rf ext; fi'
         docker-machine scp -r -q ${USER}@localhost:ext docker@${NODE_HOSTNAME}:ext
         pushd ext
             docker-machine ssh ${NODE_HOSTNAME} sh -s < script.sh init
