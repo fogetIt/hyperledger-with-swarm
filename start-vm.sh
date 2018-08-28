@@ -52,21 +52,21 @@ case ${1} in
     ;;
     up)
         python templates/build.py
-        docker-machine ssh manager 'if [ -d fabric ]; then rm -rf fabric; fi'
-        docker-machine scp -r -q ${USER}@localhost:fabric docker@manager:fabric
+        docker-machine ssh ${NODE_HOSTNAME} 'if [ -d fabric ]; then rm -rf fabric; fi'
+        docker-machine scp -r -q ${USER}@localhost:fabric docker@${NODE_HOSTNAME}:fabric
         pushd requirements
-            docker-machine ssh manager sh -s < script.sh up ${2:-'true'}
+            docker-machine ssh ${NODE_HOSTNAME} sh -s < script.sh up ${2:-'true'}
         popd
     ;;
     composer)
-        docker-machine ssh manager 'if [ -d composer ]; then rm -rf composer; fi'
+        docker-machine ssh ${NODE_HOSTNAME} 'if [ -d composer ]; then rm -rf composer; fi'
         docker-machine scp -r -q ${USER}@localhost:composer docker@${NODE_HOSTNAME}:composer
         pushd requirements
             docker-machine ssh ${NODE_HOSTNAME} sh -s < script.sh composer
         popd
     ;;
     explorer)
-        docker-machine ssh manager 'if [ -d explorer ]; then rm -rf explorer; fi'
+        docker-machine ssh ${NODE_HOSTNAME} 'if [ -d explorer ]; then rm -rf explorer; fi'
         docker-machine scp -r -q ${USER}@localhost:explorer docker@${NODE_HOSTNAME}:explorer
         pushd requirements
             docker-machine ssh ${NODE_HOSTNAME} sh -s < script.sh explorer
