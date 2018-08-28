@@ -39,21 +39,32 @@
 
 :leager:
 
-    :blockfile: 存储在 peer 上的文件系统，记录 transaction 历史集合（交易共识系统排序后产生的区块数据）
+    :blockchain:
 
-        - 每个文件有大小限制，存储一定数量的区块
-        - 每个区块包含一条或多条交易
+        :block file: 存储在 peer 上的文件系统，记录 transaction 历史集合（交易共识系统排序后产生的区块数据）
 
-    :block index: 存储在 peer 上的 LevelDB 数据库，记录区块索引（区块交易对应的文件块及其偏移）
+            - 每个文件有大小限制，存储一定数量的区块
 
-:world state: K-V 形式的世界状态数据库，提供给 chaincode 存取使用，用于快速查询当前状态
+            :block header:
 
-    - 可以使用 peer 内置的 LevelDB ，也可以外挂 CouchDB
+                - block number(integer from 0)
+                - 当前 block 所有交易的哈希
+                - 上一个 block header 的哈希的拷贝
 
-:history index: 可选的历史状态数据库，用于查询某个 key 的历史修改记录
+            :block data: 包含一条或多条交易
 
-    - 只存储 block 中有效交易相关的 key ，而不存储 value
-    - 后续需要查询的时候，根据变动历史去查询实际变动的值，这样的做法减少了数据的存储，也增加了查询逻辑的复杂度
+            :block metadata:
+
+            - 通过密码将所有的块连续到一起，使得数据非常安全，即使一个节点数据被篡改，它也无法说服其它节点
+            - 创世块不包含任何交易，它包含交易配置信息（包含网络通道的初始状态）
+
+        :block index: 存储在 peer 上的 LevelDB 数据库，记录区块索引（区块交易对应的文件块及其偏移）
+
+    :world state: K-V 形式的世界状态数据库，提供给 chaincode 存取使用，用于快速查询当前状态
+
+        - 当 peer 验证并提交一笔交易，数据库更新一次键值对
+        - 状态数据库可以根据账本重建出来（创建 peer 或者 peer 挂掉重启时，自动创建）
+        - 可以使用 peer 内置的 LevelDB ，也可以外挂 CouchDB
 
 
 工具
@@ -128,7 +139,7 @@ peer chaincode
 智能合约
 --------------
 - 本质是注册存储到链上的一段逻辑代码
-- Fabric 的智能合约称为链码，分为系统链码和用户链码
+- Fabric 的智能合约称为链码（chaincode），分为系统链码和用户链码
     - 系统链码(SCC)
         - LSCC(Lifecycle system chaincode)
             - 处理有关生命周期（一个 ``用户链码`` 的安装、实例化、升级、卸载等）的请求
@@ -150,6 +161,7 @@ peer chaincode
             - chaincode 只有在开发模式下才可以脱离容器环境
         - 支持采用 Go、Java、Nodejs 编写，并提供相应的中间层供链码使用
         - 可以使用 GetState 和 PutState 接口和 Peer 节点通信，存取 K-V 数据
+        - 每次改变或更新世界状态，会检查 chaincode 版本号
 
 
 msp

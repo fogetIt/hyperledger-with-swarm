@@ -21,11 +21,11 @@
       # - KAFKA_ZOOKEEPER_SESSION_TIMEOUT_MS = 6000
 # 使用 swarm overlay 网络，暴露出来的端口号不能重复（与单机情况等同）
 # swarm 集群的每个 docker 主机上会创建两个新网络
-#   overlay 网络
-#     容器间进行跨主机（主机的 hostname 唯一）通信的网络
-#     不改变现有网络基础设施，通过某种约定通信协议，把二层报文封装在 IP 报文之上
-#   bridge 网络
-#     将单个的 docker 守护进程连接到 swarm 中的其他守护进程
+#     overlay 网络
+#         容器间进行跨主机（主机的 hostname 唯一）通信的网络
+#         不改变现有网络基础设施，通过某种约定通信协议，把二层报文封装在 IP 报文之上
+#     bridge 网络
+#         将单个的 docker 守护进程连接到 swarm 中的其他守护进程
     # ports:
     #   kafka 默认监听端口
     #   - "{{(INDEX*10+9092)}}:9092"
@@ -33,15 +33,15 @@
     # container_name: kafka{{INDEX}}.{{ORDERERS_DOMAIN}}.com
 # docker 网络中的容器通过查找 `服务名/别名` 访问其它容器
 # 使用 docker stack deploy 时
-#   container_name 字段无效，服务名自动赋值为 `前缀_服务_编号`
-#   `服务名` 不能含 `.` ，所以通常依赖 `别名` 来发现服务
+#     container_name 字段无效，服务名自动赋值为 `前缀_服务_编号`
+#     `服务名` 不能含 `.` ，所以通常依赖 `别名` 来发现服务
 # 使用 docker-compose up/run 时
-#   container_name 默认是 `文件夹_服务_编号`
+#     container_name 默认是 `文件夹_服务_编号`
 # 主机名
-#   ubuntu hostname，存储在 /etc/hostname
-#   docker hostname，默认是容器 ID
-#     只对内部程序生效，用于内部程序需要引用一个固定的 hostname 的情况
-#     无法改变外部的 DNS 和网络隔离，外部无法通过它来连接容器
+#     ubuntu hostname，存储在 /etc/hostname
+#     docker hostname，默认是容器 ID
+#         只对内部程序生效，用于内部程序需要引用一个固定的 hostname 的情况
+#         无法改变外部的 DNS 和网络隔离，外部无法通过它来连接容器
     networks:
       {{NETWORK_NAME}}:
         aliases:

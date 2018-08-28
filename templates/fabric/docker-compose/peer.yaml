@@ -43,13 +43,25 @@
         # type 默认是 bind ，不会主动创建本地目录
       - type: volume
         # source 需要顶级 volume 中定义的数据卷支持，暂时无法指定目录
-        #   blockchains 含 index,chains 两个子目录
-        #     index 为各 ledger 的索引目录，采用 leveldb 实现
-        #     chains 为各 ledger 的 blockfile 目录，使用文件系统实现
-        #       子目录以 ledgerid 为名
-        #       blockfile 以 blockfile_ 为前缀，默认大小 64M
-        source: blockchains
-        target: /var/hyperledger/production/ledgersData/chains
+        #   ledgersData/
+        #       chains/
+        #           chains/
+        #               各 ledger 的 blockfile 目录，使用文件系统实现
+        #               子目录以 ledgerid 为名
+        #               blockfile 以 blockfile_ 为前缀，默认大小 64M
+        #           index/
+        #               各 ledger 的索引目录，采用 leveldb 实现
+        #       stateLeveldb/
+        #           存储智能合约 putstate 写入的数据的 levelDB 数据库
+        #       historyLeveldb/
+        #           存储智能合约中写入的 key 的历史记录的索引地址
+        #           只存储 block 中有效交易相关的 key ，不存储 value
+        #           后续需要查询的时候，根据变动历史去查询实际变动的值，这样的做法减少了数据的存储，也增加了查询逻辑的复杂度
+        #       ledgerProvider/
+        #           存储当前节点所包含 channel 的信息（已创建和正在创建中的 channel id ）
+        #           主要是为 Fabric 的多 channel 机制服务
+        source: ledgers_data
+        target: /var/hyperledger/production/ledgersData
 #        volume:
 #          # （ volume 创建时）是否（默认）从容器内部向外拷贝文件
 #          nocopy: false
@@ -58,12 +70,12 @@
     #   - couchdb{{INDEX}}.{{ZJHL_DOMAIN}}.com
 # depends_on 只是等待依赖项启动，不会等待依赖项准备完毕
 # docker-compose up/run 支持 depends_on
-#   version2:
-#     在 command 中使用依赖判定脚本阻塞、等待
-#     指定被依赖服务的 healthcheck ，然后 depends_on: {serveice: {condition: service_healthy/service_started}}
+#     version2:
+#         在 command 中使用依赖判定脚本阻塞、等待
+#         指定被依赖服务的 healthcheck ，然后 depends_on: {serveice: {condition: service_healthy/service_started}}
 # docker stack deploy 不支持 depends_on: serveice: condition
-#   version3:
-#     官方推荐做法：自动重启不应该等待
+#     version3:
+#         官方推荐做法：自动重启不应该等待
     ports:
       - "{{(INDEX*10+7051)}}:7051"
       - "{{(INDEX*10+7053)}}:7053"
