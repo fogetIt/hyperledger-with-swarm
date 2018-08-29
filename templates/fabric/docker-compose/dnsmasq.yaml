@@ -24,10 +24,15 @@
     volumes:
       - type: volume
         source: dnsmasq_conf
-        target: /etc/dnsmasq.conf
+        target: /etc
+        volume:
+          # （ volume 创建时）从容器内部向外拷贝文件
+          nocopy: false
     # extra_hosts:
     #   - "domain:ip"  # 往容器的 /etc/hosts 文件中添加记录
     # dns:             # 自定义 DNS 服务，可以是一个单独的值或者一张列表，往容器的 /etc/resolv.conf 文件中添加 DNS 服务器
+    #     ['8.8.8.8','8.8.4.4']                google
+    #     ['208.67.222.222','208.67.220.220']  opendns
     # dns_search:      # 自定义 DNS 搜索，可以是一个单独的值或者一张列表，在搜索 host 时，不仅搜索 host ，还拼接域名
 # /etc/docker/daemon.json -> "dns": [...]
 # 往容器的 /etc/resolv.conf 文件中添加 DNS 服务器

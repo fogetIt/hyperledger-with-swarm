@@ -63,9 +63,6 @@
         #           存储智能合约 putstate 写入的数据(levelDB)
         source: ledgers_data
         target: /var/hyperledger/production/ledgersData
-#        volume:
-#          # （ volume 创建时）是否（默认）从容器内部向外拷贝文件
-#          nocopy: false
     command: peer node start
     # depends_on:
     #   - couchdb{{INDEX}}.{{ZJHL_DOMAIN}}.com
@@ -82,10 +79,7 @@
       - "{{(INDEX*10+7053)}}:7053"
 # Needed when docker stack deploy, I don't know why.
     hostname: peer{{INDEX}}.{{ZJHL_DOMAIN}}.com
-    dns:
-      - dnsmasq.{{ZJHL_DOMAIN}}.com
-      - 208.67.222.222
-      - 208.67.220.220
+    dns: dnsmasq.{{ZJHL_DOMAIN}}.com
     networks:
       existing_overlay_network:
         aliases:
