@@ -51,6 +51,8 @@ case ${1} in
         popd
     ;;
     up)
+        docker-machine ssh worker1 'docker pull hyperledger/fabric-ca:`uname -m`-1.1.0'
+        docker-machine ssh worker2 'docker pull jpillora/dnsmasq:latest'
         python templates/build.py
         docker-machine ssh ${NODE_HOSTNAME} 'if [ -d fabric ]; then rm -rf fabric; fi'
         docker-machine scp -r -q ${USER}@localhost:fabric docker@${NODE_HOSTNAME}:fabric
