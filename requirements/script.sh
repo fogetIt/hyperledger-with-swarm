@@ -122,7 +122,7 @@ wait_composer ()
 case ${1} in
     init)
         version=${FABRIC_VERSION} && get_fabric_images peer ccenv tools orderer
-        version=${DEPEND_VERSION} && get_fabric_images kafka couchdb zookeeper
+        version=${DEPEND_VERSION} && get_fabric_images kafka couchdb zookeeper baseos
         if [[ -z $(docker plugin ls | grep sshfs) ]]; then
             docker plugin install --grant-all-permissions vieux/sshfs
         fi
