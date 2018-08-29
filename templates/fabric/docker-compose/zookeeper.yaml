@@ -30,6 +30,6 @@
 # Needed when docker stack deploy, I don't know why.
     hostname: zookeeper{{INDEX}}.{{ORDERERS_DOMAIN}}.com
     networks:
-      {{NETWORK_NAME}}:
+      existing_overlay_network:
         aliases:
           - zookeeper{{INDEX}}.{{ORDERERS_DOMAIN}}.com

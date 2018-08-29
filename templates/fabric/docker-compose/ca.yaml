@@ -23,6 +23,6 @@
     ports:
       - "{{(INDEX*10+7054)}}:7054"
     networks:
-      {{NETWORK_NAME}}:
+      existing_overlay_network:
         aliases:
           - ca.{{ZJHL_DOMAIN}}.com

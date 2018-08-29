@@ -21,6 +21,6 @@
         source: couchdb_data
         target: /opt/couchdb/data
     networks:
-      {{NETWORK_NAME}}:
+      existing_overlay_network:
         aliases:
           - couchdb{{INDEX}}.{{ZJHL_DOMAIN}}.com

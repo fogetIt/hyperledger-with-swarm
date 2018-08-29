@@ -9,6 +9,12 @@
           - node.hostname == {{MACHINE_NAME}}
     image: hyperledger/fabric-kafka:${DEPEND_IMAGE_TAG}
     command: /opt/kafka/bin/kafka-server-start.sh
+    # ports:
+    #   - "{{(INDEX*10+9092)}}:9092"  # kafka 默认监听端口
+    # extra_hosts:
+    #   - "domain:ip"                 # 往 docker 内部 /etc/hosts 文件中添加记录
+# /etc/docker/daemon.json -> "dns": [...]
+# 在容器的 /etc/resolv.conf 文件中设定 DNS 地址
     environment:
       - KAFKA_MESSAGE_MAX_BYTES=103809024
       - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024
@@ -26,9 +32,6 @@
 #         不改变现有网络基础设施，通过某种约定通信协议，把二层报文封装在 IP 报文之上
 #     bridge 网络
 #         将单个的 docker 守护进程连接到 swarm 中的其他守护进程
-    # ports:
-    #   kafka 默认监听端口
-    #   - "{{(INDEX*10+9092)}}:9092"
     # hostname: kafka{{INDEX}}.{{ORDERERS_DOMAIN}}.com
     # container_name: kafka{{INDEX}}.{{ORDERERS_DOMAIN}}.com
 # docker 网络中的容器通过查找 `服务名/别名` 访问其它容器
@@ -43,6 +46,6 @@
 #         只对内部程序生效，用于内部程序需要引用一个固定的 hostname 的情况
 #         无法改变外部的 DNS 和网络隔离，外部无法通过它来连接容器
     networks:
-      {{NETWORK_NAME}}:
+      existing_overlay_network:
         aliases:
           - kafka{{INDEX}}.{{ORDERERS_DOMAIN}}.com

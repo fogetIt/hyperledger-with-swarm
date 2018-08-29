@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  hyperledger:
+  existing_overlay_network:
     external:
       name: ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME}
 
@@ -29,7 +29,7 @@ services:
     working_dir: /home/composer
     entrypoint: /bin/sh /home/composer/composer-cli.sh
     networks:
-      - hyperledger
+      - existing_overlay_network
 
   composer_playground:
     image: hyperledger/composer-playground:${COMPOSER_VERSION}
@@ -49,7 +49,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - hyperledger
+      - existing_overlay_network
 
   composer_rest_server:
     image: hyperledger/composer-rest-server:${COMPOSER_VERSION}
@@ -72,4 +72,4 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - hyperledger
+      - existing_overlay_network

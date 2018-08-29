@@ -1,0 +1,23 @@
+  dnsmasq:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      placement:
+        constraints:
+          - node.hostname == {{MACHINE_NAME}}
+    image: andyshinn/dnsmasq:latest
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - type: volume
+        source: couchdb_data
+        target: /opt/couchdb/data
+    networks:
+      existing_overlay_network:
+        aliases:
+          - dnsmasq.{{ZJHL_DOMAIN}}.com

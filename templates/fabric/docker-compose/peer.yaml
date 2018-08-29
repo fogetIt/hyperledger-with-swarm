@@ -83,6 +83,6 @@
 # Needed when docker stack deploy, I don't know why.
     hostname: peer{{INDEX}}.{{ZJHL_DOMAIN}}.com
     networks:
-      {{NETWORK_NAME}}:
+      existing_overlay_network:
         aliases:
           - peer{{INDEX}}.{{ZJHL_DOMAIN}}.com

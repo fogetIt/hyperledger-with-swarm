@@ -9,7 +9,6 @@ current_path = os.path.abspath(os.path.dirname(__file__))
 # -----------------
 ZJHL_DOMAIN = "zjhl"
 ORDERERS_DOMAIN = "orderers"
-NETWORK_NAME = "hyperledger"
 ARCH = platform.machine()
 ZOO_SERVERS = "server.1=zookeeper0.{0}.com:2888:3888 server.2=zookeeper1.{0}.com:2888:3888 server.3=zookeeper2.{0}.com:2888:3888".format(ORDERERS_DOMAIN)
 KAFKA_ZOOKEEPER_CONNECT = "zookeeper0.{0}.com:2181,zookeeper1.{0}.com:2181,zookeeper2.{0}.com:2181".format(ORDERERS_DOMAIN)
@@ -69,5 +68,6 @@ with open(os.path.join(os.path.dirname(current_path), "fabric", "docker-compose.
 
 
 MACHINE_NAME = "manager"
+NETWORK_NAME = "hyperledger"
 with open(os.path.join(os.path.dirname(current_path), "fabric", "fabric-cli.yaml"), 'w') as f:
     f.write(parser("fabric", "fabric-cli.yaml"))

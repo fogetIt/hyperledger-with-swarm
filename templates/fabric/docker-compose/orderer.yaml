@@ -40,6 +40,6 @@
     ports:
       - "{{(INDEX*10+7050)}}:7050"
     networks:
-      {{NETWORK_NAME}}:
+      existing_overlay_network:
         aliases:
           - orderer{{INDEX}}.{{ORDERERS_DOMAIN}}.com

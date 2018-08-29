@@ -1,7 +1,7 @@
 version: '3.2'
 
 networks:
-  {{NETWORK_NAME}}:
+  existing_overlay_network:
 # external/name
 #     指定已经存在的网络，默认自动命名规则是 `前缀_名字`
 #     不会自动创建 network ，driver 等字段也不生效

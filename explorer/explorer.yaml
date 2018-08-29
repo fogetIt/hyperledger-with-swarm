@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  hyperledger:
+  existing_overlay_network:
     external:
       name: ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME}
 
@@ -23,7 +23,7 @@ services:
     # volumes:
     #   - ./pg_data:/var/lib/pgsql/data
     networks:
-      hyperledger:
+      existing_overlay_network:
         aliases:
           - postgresql.zjhl.com
 
@@ -56,4 +56,4 @@ services:
       - "8090:8080"
     # network_mode: "host"
     networks:
-      - hyperledger
+      - existing_overlay_network
