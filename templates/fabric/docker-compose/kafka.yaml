@@ -11,10 +11,6 @@
     command: /opt/kafka/bin/kafka-server-start.sh
     # ports:
     #   - "{{(INDEX*10+9092)}}:9092"  # kafka 默认监听端口
-    # extra_hosts:
-    #   - "domain:ip"                 # 往 docker 内部 /etc/hosts 文件中添加记录
-# /etc/docker/daemon.json -> "dns": [...]
-# 在容器的 /etc/resolv.conf 文件中设定 DNS 地址
     environment:
       - KAFKA_MESSAGE_MAX_BYTES=103809024
       - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024

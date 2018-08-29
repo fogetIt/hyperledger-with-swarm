@@ -15,8 +15,20 @@
       - NET_ADMIN
     volumes:
       - type: volume
-        source: couchdb_data
-        target: /opt/couchdb/data
+        source: dnsmasq_conf
+        target: /etc/dnsmasq.conf
+    # extra_hosts:
+    #   - "domain:ip"  # 往容器的 /etc/hosts 文件中添加记录
+    # dns:             # 自定义 DNS 服务，可以是一个单独的值或者一张列表，往容器的 /etc/resolv.conf 文件中添加 DNS 服务器
+    # dns_search:      # 自定义 DNS 搜索，可以是一个单独的值或者一张列表，在搜索 host 时，不仅搜索 host ，还拼接域名
+# /etc/docker/daemon.json -> "dns": [...]
+# 往容器的 /etc/resolv.conf 文件中添加 DNS 服务器
+# Linux DNS 解析的优先级
+#     /etc/hosts
+#     /etc/sysconfig/network-scripts/ifcfg-eth0  /etc/network/interfaces
+#     /etc/resolv.conf
+#         nameserver 表示解析域名时使用该地址指定的主机为域名服务器，一般不要超过 3 个
+#         按照文件中出现的顺序来查询域名服务器，且只有当第一个 nameserver 没有反应时才查询下面的
     networks:
       existing_overlay_network:
         aliases:
