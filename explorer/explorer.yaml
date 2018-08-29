@@ -55,5 +55,6 @@ services:
     ports:
       - "8090:8080"
     # network_mode: "host"
+    dns: dnsmasq.{{ZJHL_DOMAIN}}.com
     networks:
       - existing_overlay_network

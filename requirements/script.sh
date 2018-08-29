@@ -175,6 +175,7 @@ case ${1} in
         fi
         set_composer
         (cd ~/composer
+            sed -i s/{{ZJHL_DOMAIN}}/zjhl/g composer.yaml
             docker stack deploy -c composer.yaml ov
         )
         wait_composer
@@ -196,6 +197,7 @@ case ${1} in
             )
         fi
         (cd ~/explorer
+            sed -i s/{{ZJHL_DOMAIN}}/zjhl/g explorer.yaml
             sed -i s/{{ZJHL_DOMAIN}}/zjhl/g config.json
             sed -i s/{{ORDERERS_DOMAIN}}/orderers/g config.json
             docker run --rm \

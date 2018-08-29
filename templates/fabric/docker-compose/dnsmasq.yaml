@@ -13,8 +13,8 @@
       - HTTP_USER=admin
       - HTTP_PASS=zj12315
     ports:
-      - 53:53/tcp
-      - 53:53/udp
+      # - 53:53/tcp
+      # - 53:53/udp
       - 5380:8080
 # 调整容器对宿主机内核的操作权限（使用 docker stack deploy 时无效）
     # cap_add:
