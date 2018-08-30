@@ -1,5 +1,4 @@
 #!/bin/bash
-NODE_HOSTNAME='manager'
 set -e
 DIR=$(pwd)
 vm_init ()
@@ -34,7 +33,6 @@ case ${1} in
         vm_init worker1
         vm_init worker2
         docker-machine ssh worker1 'docker pull hyperledger/fabric-ca:`uname -m`-1.1.0'
-        docker-machine ssh worker2 'docker pull jpillora/dnsmasq:latest'
         echo "!!!Recreate the only global swarm token!!!"
         # manager_host=${${$(docker-machine url manager)#*//}%:*}
         manager_host=$(docker-machine url manager | cut -d / -f 3 | cut -d : -f 1)
@@ -54,24 +52,24 @@ case ${1} in
     ;;
     up)
         python templates/build.py
-        docker-machine ssh ${NODE_HOSTNAME} 'if [ -d fabric ]; then rm -rf fabric; fi'
-        docker-machine scp -r -q ${USER}@localhost:fabric docker@${NODE_HOSTNAME}:fabric
+        docker-machine ssh manager 'if [ -d fabric ]; then rm -rf fabric; fi'
+        docker-machine scp -r -q ${USER}@localhost:fabric docker@manager:fabric
         pushd requirements
-            docker-machine ssh ${NODE_HOSTNAME} sh -s < script.sh up ${2:-'true'}
+            docker-machine ssh manager sh -s < script.sh up ${2:-'true'}
         popd
     ;;
     composer)
-        docker-machine ssh ${NODE_HOSTNAME} 'if [ -d composer ]; then rm -rf composer; fi'
-        docker-machine scp -r -q ${USER}@localhost:composer docker@${NODE_HOSTNAME}:composer
+        docker-machine ssh manager 'if [ -d composer ]; then rm -rf composer; fi'
+        docker-machine scp -r -q ${USER}@localhost:composer docker@manager:composer
         pushd requirements
-            docker-machine ssh ${NODE_HOSTNAME} sh -s < script.sh composer
+            docker-machine ssh manager sh -s < script.sh composer
         popd
     ;;
     explorer)
-        docker-machine ssh ${NODE_HOSTNAME} 'if [ -d explorer ]; then rm -rf explorer; fi'
-        docker-machine scp -r -q ${USER}@localhost:explorer docker@${NODE_HOSTNAME}:explorer
+        docker-machine ssh manager 'if [ -d explorer ]; then rm -rf explorer; fi'
+        docker-machine scp -r -q ${USER}@localhost:explorer docker@manager:explorer
         pushd requirements
-            docker-machine ssh ${NODE_HOSTNAME} sh -s < script.sh explorer
+            docker-machine ssh manager sh -s < script.sh explorer
         popd
     ;;
 esac

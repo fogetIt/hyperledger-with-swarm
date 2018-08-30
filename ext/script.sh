@@ -38,16 +38,19 @@ case ${1} in
         tce-load -wi python
         curl https://bootstrap.pypa.io/get-pip.py | sudo python -
         sudo pip install docker-compose
-        version=${DEPEND_VERSION} && get_fabric_images couchdb
         version=${FABRIC_VERSION} && get_fabric_images ca peer ccenv tools orderer
+        version=${DEPEND_VERSION} && get_fabric_images baseos baseimage couchdb
     ;;
     down)
-        (cd ~/ext/ext
+        (cd ~/ext/add
             docker-compose rm -f
         )
+        clear_containers
+        remove_unwanted_images
+        clear_volumes
     ;;
-    up)
-        (cd ~/ext/ext
+    add)
+        (cd ~/ext/add
             sed -i s/{{DOMAIN}}/ext/g configtx.yaml
             sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
             docker-compose up -d
