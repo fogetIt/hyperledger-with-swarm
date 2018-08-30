@@ -145,11 +145,11 @@ case ${1} in
     ;;
     up)
         # only on manager node
-        export CC_TEST=${2:-'true'}
         (cd ~/fabric
             (cd scripts
                 [[ -f wait-for ]] || curl -O https://raw.githubusercontent.com/eficode/wait-for/master/wait-for
             )
+            export CC_TEST=${2:-'true'}
             docker stack deploy -c fabric-cli.yaml ov
             info_log "Deploying fabric!"
             set_fabric_globals

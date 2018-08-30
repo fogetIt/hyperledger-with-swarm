@@ -56,4 +56,13 @@ case ${1} in
             docker-compose up -d
         )
     ;;
+    update)
+        (cd ~/ext
+            # (cd update
+            #     export CC_TEST=${2:-'true'}
+            #     docker-compose up -d
+            # )
+            docker-compose up -d
+        )
+    ;;
 esac

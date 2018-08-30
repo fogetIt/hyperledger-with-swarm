@@ -29,7 +29,7 @@ services:
     command: peer node start
     volumes:
       - /var/run/:/host/var/run/
-      - {{DOMAIN}}_peers_volume:/var/peers-config:readonly
+      - ./crypto-config/peerOrganizations/{{DOMAIN}}.com/peers/:/var/peers-config:readonly
     depends_on:
       - couchdb0.{{DOMAIN}}.com
     hostname: peer0.{{DOMAIN}}.com
@@ -50,4 +50,4 @@ services:
       - FABRIC_CA_SERVER_TLS_CERTFILE=/var/ca-config/ca.{{DOMAIN}}.com-cert.pem
     command: sh -c "fabric-ca-server start --ca.certfile $${FABRIC_CA_SERVER_TLS_CERTFILE} --ca.keyfile $${FABRIC_CA_SERVER_TLS_KEYFILE} -b admin:adminpw -d"
     volumes:
-      - {{DOMAIN}}_ca_volume:/var/ca-config:readonly
+      - ./crypto-config/peerOrganizations/{{DOMAIN}}.com/ca/:/var/ca-config:readonly

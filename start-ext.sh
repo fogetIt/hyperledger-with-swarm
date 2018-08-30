@@ -72,9 +72,9 @@ case ${1} in
     up)
         pushd ext
             docker-machine ssh ext sh -s < script.sh add
+            docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations docker@ext:ext/crypto-config/
+            docker-machine scp -r -q docker@manager:fabric/chaincode docker@ext:ext/update/
+            docker-machine ssh ext sh -s < script.sh update ${2:-'true'}
         popd
-        docker-machine scp -r -q \
-            docker@manager:fabric/crypto-config/ordererOrganizations \
-            docker@ext:ext/crypto-config/
     ;;
 esac
