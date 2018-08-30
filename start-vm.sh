@@ -1,5 +1,5 @@
 #!/bin/bash
-NODE_HOSTNAME="manager"
+NODE_HOSTNAME='manager'
 set -e
 DIR=$(pwd)
 vm_init ()

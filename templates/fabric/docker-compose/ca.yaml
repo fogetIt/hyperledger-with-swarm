@@ -20,8 +20,8 @@
     command: sh -c "fabric-ca-server start --ca.certfile $${FABRIC_CA_SERVER_TLS_CERTFILE} --ca.keyfile $${FABRIC_CA_SERVER_TLS_KEYFILE} -b admin:adminpw -d"
     volumes:
       - {{ZJHL_DOMAIN}}_ca_volume:/var/ca-config:readonly
-    ports:
-      - "{{(INDEX*10+7054)}}:7054"
+    # ports:
+    #   - "{{(INDEX*10+7054)}}:7054"
     networks:
       existing_overlay_network:
         aliases:

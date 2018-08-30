@@ -37,8 +37,8 @@
       - channel_artifacts:/var/channel-artifacts:readonly
       - {{ORDERERS_DOMAIN}}_volume:/var/orderers-config:readonly
     command: orderer
-    ports:
-      - "{{(INDEX*10+7050)}}:7050"
+    # ports:
+    #   - "{{(INDEX*10+7050)}}:7050"
     networks:
       existing_overlay_network:
         aliases:

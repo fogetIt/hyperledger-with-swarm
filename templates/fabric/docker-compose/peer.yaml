@@ -74,9 +74,9 @@
 # docker stack deploy 不支持 depends_on: serveice: condition
 #     version3:
 #         官方推荐做法：自动重启不应该等待
-    ports:
-      - "{{(INDEX*10+7051)}}:7051"
-      - "{{(INDEX*10+7053)}}:7053"
+    # ports:
+    #   - "{{(INDEX*10+7051)}}:7051"
+    #   - "{{(INDEX*10+7053)}}:7053"
 # Needed when docker stack deploy, I don't know why.
     hostname: peer{{INDEX}}.{{ZJHL_DOMAIN}}.com
     networks:

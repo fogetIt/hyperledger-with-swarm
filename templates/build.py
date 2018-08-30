@@ -62,8 +62,7 @@ fabric_docker_compose_parser(3, "manager", "kafka.yaml") + \
 fabric_docker_compose_parser(0, "manager", "orderer.yaml") + \
 fabric_docker_compose_parser(1, "worker1", "orderer.yaml") + \
 fabric_docker_compose_parser(2, "worker2", "orderer.yaml") + \
-fabric_docker_compose_parser(0, "worker1", "ca.yaml") + \
-fabric_docker_compose_parser(0, "worker2", "dnsmasq.yaml")
+fabric_docker_compose_parser(0, "worker1", "ca.yaml")
 with open(os.path.join(os.path.dirname(current_path), "fabric", "docker-compose.yml"), "w") as f:
     f.write(docker_compose)
 
