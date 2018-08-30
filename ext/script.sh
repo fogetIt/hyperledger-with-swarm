@@ -33,6 +33,40 @@ get_fabric_images ()
         # docker tag "hyperledger/fabric-${name}:${ARCH}-${version}" "hyperledger/fabric-${name}:latest"
     done
 }
+clear_containers ()
+{
+    containers=$(docker ps -aq)
+    if [ -z "${containers}" -o "${containers}" == " " ]; then
+        info_log "No containers available for deletion"
+    else
+        docker rm -f ${containers}
+    fi
+}
+remove_unwanted_images ()
+{
+    images=$(docker images | grep "dev\|test-vp\|peer[0-9]-" | awk '{print $3}')
+    if [ ! -z "${images}" -a "${images}" != " " ]; then
+        docker rmi -f ${images}
+    fi
+    images=$(docker images --format "table{{.Repository}}\t{{.ID}}" | grep none | awk '{print $2}')
+    if [ -z "${images}" -o "${images}" == " " ]; then
+        info_log "No images available for deletion"
+    else
+        docker rmi -f ${images}
+    fi
+}
+clear_volumes ()
+{
+    info_log "Remove local volumes"
+    echo 'y' | docker volume prune
+    sshfs_volumes=$(docker volume ls -q)
+    info_log "Remove vieux/sshfs volumes"
+    if [ -z "${sshfs_volumes}" -o "${sshfs_volumes}" == " " ]; then
+        info_log "No vieux/sshfs volumes available for deletion"
+    else
+        docker volume rm ${sshfs_volumes}
+    fi
+}
 case ${1} in
     init)
         tce-load -wi python
@@ -42,26 +76,31 @@ case ${1} in
         version=${DEPEND_VERSION} && get_fabric_images baseos baseimage couchdb
     ;;
     down)
-        (cd ~/ext/add
-            docker-compose rm -f
-        )
         clear_containers
         remove_unwanted_images
         clear_volumes
     ;;
     add)
-        (cd ~/ext/add
-            sed -i s/{{DOMAIN}}/ext/g configtx.yaml
-            sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
-            docker-compose up -d
+        (cd ~/ext
+            (cd add
+                sed -i s/{{DOMAIN}}/ext/g configtx.yaml
+                sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
+                docker-compose up
+                docker-compose rm -f
+            )
+            sudo chmod -R 777 crypto-config channel-artifacts
+            sudo chown -R ${USER} crypto-config channel-artifacts
+            sudo chgrp -R staff crypto-config channel-artifacts
         )
     ;;
     update)
+set -x
         (cd ~/ext
             # (cd update
             #     export CC_TEST=${2:-'true'}
             #     docker-compose up -d
             # )
+            sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
             docker-compose up -d
         )
     ;;
