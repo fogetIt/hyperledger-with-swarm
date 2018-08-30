@@ -38,8 +38,8 @@ case ${1} in
         tce-load -wi python
         curl https://bootstrap.pypa.io/get-pip.py | sudo python -
         sudo pip install docker-compose
+        version=${DEPEND_VERSION} && get_fabric_images couchdb
         version=${FABRIC_VERSION} && get_fabric_images ca peer ccenv tools orderer
-        version=${DEPEND_VERSION} && get_fabric_images couchdb baseos baseimage
     ;;
     down)
         (cd ~/ext/ext

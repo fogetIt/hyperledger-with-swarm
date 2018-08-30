@@ -1,14 +1,6 @@
 version: '2'
 
 services:
-  dnsmasq.{{DOMAIN}}.com:
-    image: jpillora/dnsmasq:latest
-    environment:
-      # 访问 web ui 的用户名、密码
-      - HTTP_USER=admin
-      - HTTP_PASS=ext12315
-    ports:
-      - 5380:8080
 
   peer0.{{DOMAIN}}.com:
     image: hyperledger/fabric-peer:${FABRIC_IMAGE_TAG}
@@ -44,7 +36,6 @@ services:
       - "7051:7051"
       - "7053:7053"
     hostname: peer0.{{DOMAIN}}.com
-    dns: dnsmasq.{{DOMAIN}}.com
 
   couchdb0.{{DOMAIN}}.com:
     image: hyperledger/fabric-couchdb:${DEPEND_IMAGE_TAG}

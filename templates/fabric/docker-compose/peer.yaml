@@ -79,7 +79,6 @@
       - "{{(INDEX*10+7053)}}:7053"
 # Needed when docker stack deploy, I don't know why.
     hostname: peer{{INDEX}}.{{ZJHL_DOMAIN}}.com
-    dns: dnsmasq.{{ZJHL_DOMAIN}}.com
     networks:
       existing_overlay_network:
         aliases:

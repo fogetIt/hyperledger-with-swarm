@@ -53,6 +53,5 @@ volumes:
       password: ${MANAGER_PASSWD}
   ledgers_data:
   couchdb_data:
-  dnsmasq_conf:
 
 services:

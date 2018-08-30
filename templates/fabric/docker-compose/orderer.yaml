@@ -39,7 +39,6 @@
     command: orderer
     ports:
       - "{{(INDEX*10+7050)}}:7050"
-    dns: dnsmasq.{{ZJHL_DOMAIN}}.com
     networks:
       existing_overlay_network:
         aliases:

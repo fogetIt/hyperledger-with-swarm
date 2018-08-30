@@ -28,7 +28,6 @@ services:
       - ./endorsement-policy.json:/home/composer/endorsement-policy.json
     working_dir: /home/composer
     entrypoint: /bin/sh /home/composer/composer-cli.sh
-    dns: dnsmasq.{{ZJHL_DOMAIN}}.com
     networks:
       - existing_overlay_network
 
@@ -49,7 +48,6 @@ services:
     working_dir: /home/composer
     ports:
       - "8080:8080"
-    dns: dnsmasq.{{ZJHL_DOMAIN}}.com
     networks:
       - existing_overlay_network
 
@@ -73,6 +71,5 @@ services:
       - COMPOSER_NAMESPACES=never
     ports:
       - "3000:3000"
-    dns: dnsmasq.{{ZJHL_DOMAIN}}.com
     networks:
       - existing_overlay_network
