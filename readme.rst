@@ -2,34 +2,53 @@
 ----
 - peers 组成 org ， orgs 组成 channel
 
-:fabric-ca: 会员注册和证书颁发节点
+:ca: 会员注册和证书颁发节点
 
     - 每个 org 需要一个 ca 节点
     - fabric 系统的参与方（ orderer,peer,client ）都必须经过授权，需要拥有受信任的证书
     - 在 1.0 版本中， CA 可以脱离 docker 和节点，作为一个独立的服务来运行
 
-:fabric-orderer: 共识网络节点
+:orderer: 共识网络节点
 
     - 每个 channel 需要一个 orderer 集群
     - 多方一起参与交易排序，生成新的区块，发送给 peer 节点
     - orderer 拥有所有通道的 blockfile ，但是它没有世界状态，无法查询交易，只是为了方便 peer 节点拉取
 
-:fabric-peer: 区块链节点
+:peer: 区块链节点
 
-    - (commit)peer 节点收到区块后，会对区块中的每笔交易进行校验，检查交易依赖的输入输出是否符合当前区块链的状态，完成后
-        - 将 leager 写入 blockfile
-        - 修改 world state
+    :committer peer: 记账节点
+
+        - 收到区块后，会对区块中的每笔交易进行校验，检查交易依赖的输入输出是否符合当前区块链的状态，完成后
+            - 将 leager 写入 blockfile
+            - 修改 world state
+
+    :endorser peer: 背书节点
+
+        - 模拟执⾏ chaincode ，将原始交易提案（proposal）和执行结果打包到一起，进行签名并发回给客户端
+            - 交易提案中包含本次交易要调用的合约标识、合约方法和参数信息以及客户端签名等
+            - 每个交易提案（proposal）要么是 chaincode instantiate ，要么是 chaincode invoke
+            - 在模拟执行交易期间产生的数据修改不会写到账本上
+
+    :anchor peer: 锚节点
+
+        - 锚节点配置信息写在交易块文件（.tx）里，可以被同一 channel 其它所有节点发现
+        - 允许属于不同组织（成员身份）的节点来发现通道中存在的其它节点
+        - 一个组织可以有多个锚节点，防止单点故障
+
+    :leading peer: 主导节点
+
+        - orderer 持有不同组织的锚节点和配置信息
+        - leading peer 代表一个组织从 orderer 获取 block ，并且组内广播给其他 peer
+        - 其他 peer 可以不直接跟 orderer 打交道
+        - 可以强制设置为主节点，也可以动态选举产生
 
 交易过程
 -------------
-- ChainCode 的一次调⽤
+- chaincode 的一次调⽤
     - 应⽤（客户端）向 1～多个 peer 节点发送对事务的背书请求
-    - 背书（endorsement）节点（模拟）执⾏ chaincode ，将原始交易提案（proposal）和执行结果打包到一起，进行签名并发回给客户端
-        - 交易提案中包含本次交易要调用的合约标识、合约方法和参数信息以及客户端签名等
-        - 每个交易提案（proposal）要么是 chaincode instantiate ，要么是 chaincode invoke
-        - 在模拟执行交易期间产生的数据修改不会写到账本上
+    - 背书节点模拟执⾏ chaincode ，将原始交易提案（proposal）和执行结果打包到一起，进行签名并发回给客户端
     - 应⽤（客户端）收集所有背书节点的结果后，广播给 orderers
-    - orderers 执⾏行共识过程，并生成 block ，通过消息通道批量的将 block 发布给 peer 节点
+    - orderers 执⾏行共识过程，并生成 block ，通过消息通道批量的将 block 发布给 committer peer
     - 各个 peer 节点验证交易，并提交到本地账本中
 
 
