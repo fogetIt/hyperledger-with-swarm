@@ -108,7 +108,11 @@ set_composer ()
     (cd ~/composer
         sed -i s/{{ZJHL_DOMAIN}}/zjhl/g zjhl.json
         sed -i s/{{ORDERERS_DOMAIN}}/orderers/g zjhl.json
-        python replace.py
+        docker run --rm \
+            -v $(pwd)/zjhl.json:/tmp/zjhl.json \
+            -v $(pwd)/replace.py:/tmp/replace.py \
+            -v $(pwd)/fabric-config:/tmp/fabric-config \
+            python:latest python /tmp/replace.py
         [ -d 644ApiDoc ] || git clone https://github.com/mitusisi644/644ApiDoc.git
     )
 }
@@ -160,10 +164,11 @@ case ${1} in
     ;;
     composer)
         # only on ${NODE_HOSTNAME} node
+        docker pull python:latest
+        # python --version || tce-load -wi python
         docker pull hyperledger/composer-cli:${COMPOSER_VERSION}
         docker pull hyperledger/composer-playground:${COMPOSER_VERSION}
         docker pull hyperledger/composer-rest-server:${COMPOSER_VERSION}
-        python --version || tce-load -wi python
         if [ ! -z $(docker service ls -q --filter NAME=ov_composer_cli) ]; then
             docker service rm ov_composer_cli
         fi
