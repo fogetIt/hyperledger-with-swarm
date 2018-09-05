@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 export ARCH=`uname -m`
-export COMPOSE_PROJECT_NAME='ext'
+export COMPOSE_PROJECT_NAME='ov'
 export NETWORK_NAME='hyperledger'
 export LOG_LEVEL='info'
 
@@ -101,13 +101,16 @@ case ${1} in
     ;;
     update)
         (cd ~/ext
-            # (cd update
-            #     export CC_TEST=${2:-'true'}
-            #     docker-compose up -d
-            # )
             sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
             export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
             docker-compose up -d
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
+            (cd update
+                export CC_TEST=${2:-'true'}
+                docker-compose up -d
+            )
         )
     ;;
 esac
