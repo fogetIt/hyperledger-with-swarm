@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 export ARCH=`uname -m`
-export COMPOSE_PROJECT_NAME='ov'
+export COMPOSE_PROJECT_NAME='ext'
 export NETWORK_NAME='hyperledger'
 export LOG_LEVEL='info'
 
@@ -69,9 +69,15 @@ clear_volumes ()
 }
 case ${1} in
     init)
-        tce-load -wi python
-        curl https://bootstrap.pypa.io/get-pip.py | sudo python -
-        sudo pip install docker-compose
+        # tce-load -wi python
+        # curl https://bootstrap.pypa.io/get-pip.py | sudo python -
+        # sudo pip install docker-compose
+        if ! docker-compose --version; then
+            sudo curl \
+                -L https://get.daocloud.io/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` \
+                -o /usr/local/bin/docker-compose -k
+            sudo chmod +x /usr/local/bin/docker-compose
+        fi
         version=${FABRIC_VERSION} && get_fabric_images ca peer ccenv tools orderer
         version=${DEPEND_VERSION} && get_fabric_images baseos baseimage couchdb
     ;;
@@ -94,13 +100,13 @@ case ${1} in
         )
     ;;
     update)
-set -x
         (cd ~/ext
             # (cd update
             #     export CC_TEST=${2:-'true'}
             #     docker-compose up -d
             # )
             sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
+            export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
             docker-compose up -d
         )
     ;;

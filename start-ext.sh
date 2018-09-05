@@ -24,15 +24,14 @@ case ${1} in
         popd
     ;;
     up)
-set -x
         pushd ext
             docker-machine ssh ext sh -s < script.sh add
 
-            docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ~/tmp/
-            docker-machine scp -r -q ${USER}@localhost:tmp/ordererOrganizations docker@ext:ext/crypto-config/
+            docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ${HOME}/tmp/
+            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ordererOrganizations docker@ext:ext/crypto-config/
 
-            docker-machine scp -r -q docker@manager:fabric/chaincode ~/tmp/
-            docker-machine scp -r -q ${USER}@localhost:tmp/chaincode docker@ext:ext/update/
+            docker-machine scp -r -q docker@manager:fabric/chaincode ${HOME}/tmp/
+            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/chaincode docker@ext:ext/update/
 
             docker-machine ssh ext sh -s < script.sh update ${2:-'true'}
         popd
