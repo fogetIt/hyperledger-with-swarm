@@ -69,6 +69,7 @@ clear_volumes ()
 }
 case ${1} in
     init)
+        # on ext node
         # tce-load -wi python
         # curl https://bootstrap.pypa.io/get-pip.py | sudo python -
         # sudo pip install docker-compose
@@ -82,37 +83,35 @@ case ${1} in
         version=${DEPEND_VERSION} && get_fabric_images baseos baseimage couchdb
     ;;
     down)
+        # on ext node
         clear_containers
         remove_unwanted_images
         clear_volumes
     ;;
     add)
-        (cd ~/ext
-            (cd add
-                sed -i s/{{DOMAIN}}/ext/g configtx.yaml
-                sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
-                docker-compose up
-                docker-compose rm -f
-            )
-            sudo chmod -R 777 crypto-config channel-artifacts
-            sudo chown -R ${USER} crypto-config channel-artifacts
-            sudo chgrp -R staff crypto-config channel-artifacts
+        # on ext node
+        (cd ~/add
+            sed -i s/{{DOMAIN}}/ext/g configtx.yaml
+            sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
+            docker-compose -f fabric-cli.yaml up
+            docker-compose -f fabric-cli.yaml rm -f
         )
+        sudo chmod -R 777 crypto-config channel-artifacts
+        sudo chown -R ${USER} crypto-config channel-artifacts
+        sudo chgrp -R staff crypto-config channel-artifacts
+        sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
+        export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
+        docker-compose up -d
+        docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
+        docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
+        docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
     ;;
     update)
-        (cd ~/ext
-            sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
-            export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
-            docker-compose up -d
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
-            (cd update
-                export CC_TEST=${2:-'true'}
-                docker-compose up -d
-                docker network connect --alias ov.ext.com ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ov_update
-                docker logs ov_update --follow
-            )
+        # on manager node
+        (cd ~/update
+            export CC_TEST=${2:-'true'}
+            docker stack deploy -c fabric-cli.yaml ov
         )
+        docker service logs ov_cli --raw --follow
     ;;
 esac

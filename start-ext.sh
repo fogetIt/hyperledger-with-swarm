@@ -13,8 +13,6 @@ case ${1} in
             docker-machine regenerate-certs ext --force
             docker-machine ssh ext 'docker swarm leave -f'
         fi
-        docker-machine ssh ext 'if [ -d ext ]; then rm -rf ext; fi'
-        docker-machine scp -r -q ${USER}@localhost:ext docker@ext:ext
         pushd ext
             docker-machine ssh ext sh -s < script.sh init
         popd
@@ -26,15 +24,17 @@ case ${1} in
     ;;
     up)
         pushd ext
+            docker-machine ssh ext 'if [ -d add ]; then rm -rf add; fi'
+            docker-machine scp -r -q ${USER}@localhost:add docker@ext:add
             docker-machine ssh ext sh -s < script.sh add
 
-            docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ${HOME}/tmp/
-            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ordererOrganizations docker@ext:ext/crypto-config/
+            docker-machine ssh manager 'if [ -d update ]; then rm -rf update; fi'
+            docker-machine scp -r -q ${USER}@localhost:update docker@manager:update
 
-            docker-machine scp -r -q docker@manager:fabric/chaincode ${HOME}/tmp/
-            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/chaincode docker@ext:ext/update/
+            docker-machine scp -r -q docker@ext:add/channel-artifacts/ext.json ${HOME}/tmp/
+            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ext.json docker@manager:update/channel-artifacts/
 
-            docker-machine ssh ext sh -s < script.sh update ${2:-'true'}
+            docker-machine ssh manager sh -s < script.sh update ${2:-'true'}
         popd
     ;;
 esac
