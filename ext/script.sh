@@ -111,6 +111,7 @@ case ${1} in
         (cd ~/update
             docker stack deploy -c fabric-cli.yaml ov
         )
+        sleep 5
         while test $(docker service ls --filter NAME=ov_cli_update --format "{{.Replicas}}") != '1/1'; do
             sleep 5
         done
@@ -121,6 +122,7 @@ case ${1} in
         (cd ~/add
             export CC_TEST=${2:-'true'}
             docker-compose -f ext.yaml up
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ov_ext
             docker-compose -f ext.yaml rm -f
         )
     ;;

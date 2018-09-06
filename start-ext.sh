@@ -36,6 +36,9 @@ case ${1} in
 
             docker-machine ssh manager sh -s < script.sh update
 
+            docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ${HOME}/tmp/
+            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ordererOrganizations docker@ext:add/crypto-config/
+
             docker-machine ssh ext sh -s < script.sh ext ${2:-'true'}
         popd
     ;;
