@@ -95,23 +95,24 @@ case ${1} in
             sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
             docker-compose -f fabric-cli.yaml up
             docker-compose -f fabric-cli.yaml rm -f
+            sudo chmod -R 777 crypto-config channel-artifacts
+            sudo chown -R ${USER} crypto-config channel-artifacts
+            sudo chgrp -R staff crypto-config channel-artifacts
+            sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
+            export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
+            docker-compose up -d
         )
-        sudo chmod -R 777 crypto-config channel-artifacts
-        sudo chown -R ${USER} crypto-config channel-artifacts
-        sudo chgrp -R staff crypto-config channel-artifacts
-        sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
-        export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
-        docker-compose up -d
         docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
         docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
         docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
     ;;
     update)
+    set -x
         # on manager node
         (cd ~/update
             export CC_TEST=${2:-'true'}
             docker stack deploy -c fabric-cli.yaml ov
         )
-        docker service logs ov_cli --raw --follow
+        docker service logs ov_cli_update --raw --follow
     ;;
 esac

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 source utils.sh
 : <<'COMMIT'
 SLEEP_DELAY
@@ -10,6 +11,7 @@ CHANNEL_JOIN_MAX_RETRY
 COMMIT
 set_orderer_globals
 
+set -x
 pushd ${FABRIC_CFG_PATH}/channel-artifacts
 	info_log "Fetching the most recent channel configuration block, decoding to JSON and isolating config to original_config.json"
 		peer channel fetch config config_block.pb -o ${ORDERER_ADDR} -c ${CHANNEL_NAME} --tls --cafile ${ORDERER_CA}

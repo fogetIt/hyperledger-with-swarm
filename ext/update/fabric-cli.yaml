@@ -6,7 +6,7 @@ networks:
       name: ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME}
 
 services:
-  cli:
+  cli_update:
     deploy:
       replicas: 1
       restart_policy:
@@ -42,4 +42,4 @@ services:
       - ./channel-artifacts:/etc/hyperledger/fabric/channel-artifacts
       - ./scripts:/etc/hyperledger/fabric/scripts
     networks:
-      - hyperledger
+      - existing_overlay_network
