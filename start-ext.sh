@@ -34,7 +34,9 @@ case ${1} in
             docker-machine scp -r -q docker@ext:add/channel-artifacts/ext.json ${HOME}/tmp/
             docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ext.json docker@manager:update/channel-artifacts/
 
-            docker-machine ssh manager sh -s < script.sh update ${2:-'true'}
+            docker-machine ssh manager sh -s < script.sh update
+
+            docker-machine ssh ext sh -s < script.sh ext ${2:-'true'}
         popd
     ;;
 esac

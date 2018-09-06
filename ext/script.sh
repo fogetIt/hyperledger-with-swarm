@@ -107,12 +107,18 @@ case ${1} in
         docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
     ;;
     update)
-    set -x
         # on manager node
         (cd ~/update
-            export CC_TEST=${2:-'true'}
             docker stack deploy -c fabric-cli.yaml ov
         )
         docker service logs ov_cli_update --raw --follow
+    ;;
+    ext)
+        # on ext node
+        (cd ~/add
+            export CC_TEST=${2:-'true'}
+            docker-compose -f ext.yaml up
+            docker-compose -f ext.yaml rm -f
+        )
     ;;
 esac
