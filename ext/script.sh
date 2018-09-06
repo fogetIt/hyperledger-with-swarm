@@ -110,6 +110,8 @@ case ${1} in
             (cd update
                 export CC_TEST=${2:-'true'}
                 docker-compose up -d
+                docker network connect --alias ov.ext.com ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ov_update
+                docker logs ov_update --follow
             )
         )
     ;;

@@ -1,7 +1,9 @@
 version: '2'
 
 services:
-    image: hyperledger/tools:${FABRIC_IMAGE_TAG}
+  update:
+    image: hyperledger/fabric-tools:${FABRIC_IMAGE_TAG}
+    container_name: ov_update
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GOPATH=/opt/gopath

@@ -11,6 +11,7 @@ case ${1} in
         elif [[ $(docker-machine ls --filter NAME=ext --format "{{.State}}") == 'Stopped' ]]; then
             docker-machine start ext
             docker-machine regenerate-certs ext --force
+            docker-machine ssh ext 'docker swarm leave -f'
         fi
         docker-machine ssh ext 'if [ -d ext ]; then rm -rf ext; fi'
         docker-machine scp -r -q ${USER}@localhost:ext docker@ext:ext

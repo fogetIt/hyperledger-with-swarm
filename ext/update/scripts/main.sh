@@ -1,8 +1,9 @@
 #!/bin/bash
-set -e
 source utils.sh
 apt -y update
 apt -y install jq
+set -e
+set -x
 pushd ${FABRIC_CFG_PATH}/scripts
     echo
     echo " ____    _____      _      ____    _____ "

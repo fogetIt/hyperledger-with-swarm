@@ -10,7 +10,7 @@ CHANNEL_JOIN_MAX_RETRY
 COMMIT
 set_orderer_globals
 
-pushd channel-artifacts
+pushd ${FABRIC_CFG_PATH}/channel-artifacts
 	info_log "Fetching the most recent channel configuration block, decoding to JSON and isolating config to original_config.json"
 		peer channel fetch config config_block.pb -o ${ORDERER_ADDR} -c ${CHANNEL_NAME} --tls --cafile ${ORDERER_CA}
 		configtxlator proto_decode --input config_block.pb --type common.Block | jq .data.data[0].payload.data.config > original_config.json
@@ -26,12 +26,12 @@ pushd channel-artifacts
 		configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope >ext_update_in_envelope.pb
 	info_log "Signing config transaction to add org to network created"
 	(
-		org=zjhl;peer=0;set_peer_globals
+		org=zjhl;peer=peer0;set_peer_globals
 		peer channel signconfigtx -f ext_update_in_envelope.pb
 	)
 	info_log "Submitting transaction from a different peer which also signs it"
 	(
-		org=zjhl;peer=1;set_peer_globals
+		org=zjhl;peer=peer1;set_peer_globals
 		peer channel update -f ext_update_in_envelope.pb -c ${CHANNEL_NAME} -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CA}
 	)
 popd
@@ -52,11 +52,11 @@ join_channel_with_retry ()
 }
 info_log "Fetching channel config block from orderer..."
 (
-	org=ext;peer=0;set_peer_globals
+	org=ext;peer=peer0;set_peer_globals
 	peer channel fetch 0 ${CHANNEL_NAME}.block -o ${ORDERER_ADDR} -c ${CHANNEL_NAME} --tls --cafile ${ORDERER_CA}
 )
 info_log "Having ext peers join the channel..."
 (
-    org=ext;peer=0;set_peer_globals
+    org=ext;peer=peer0;set_peer_globals
     join_channel_with_retry
 )
