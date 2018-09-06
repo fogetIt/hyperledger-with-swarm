@@ -51,6 +51,7 @@ case ${1} in
             docker-machine ssh worker1 sh -s < script.sh down
             docker-machine ssh worker2 sh -s < script.sh down
         popd
+        /bin/bash start-ext.sh down
     ;;
     up)
         python templates/build.py

@@ -14,7 +14,7 @@ services:
       - CC_TEST=${CC_TEST}
       - CC_LANGUAGE=golang
       - CC_QUERY_TIMEOUT=10
-    working_dir: /etc/hyperledger/fabric
+    working_dir: /etc/hyperledger/fabric/scripts
     command: '/bin/bash main.sh'
     volumes:
       - ./scripts:/etc/hyperledger/fabric/scripts

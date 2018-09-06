@@ -111,7 +111,10 @@ case ${1} in
         (cd ~/update
             docker stack deploy -c fabric-cli.yaml ov
         )
-        docker service logs ov_cli_update --raw --follow
+        while test $(docker service ls --filter NAME=ov_cli_update --format "{{.Replicas}}") != '1/1'; do
+            sleep 5
+        done
+        docker service logs ov_cli_update --raw
     ;;
     ext)
         # on ext node
