@@ -87,7 +87,7 @@ update ()
     while test $(docker service ls --filter NAME=ov_update --format "{{.Replicas}}") != '1/1'; do
         sleep 5
     done
-    docker service logs ov_update --raw
+    docker service logs ov_update
     docker service rm ov_update
 }
 case ${1} in

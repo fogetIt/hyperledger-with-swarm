@@ -23,7 +23,6 @@ case ${1} in
         popd
     ;;
     up)
-    set -x
         pushd ext
             docker-machine ssh ext 'if [ -d add ]; then rm -rf add; fi'
             docker-machine scp -r -q ${USER}@localhost:add docker@ext:add
