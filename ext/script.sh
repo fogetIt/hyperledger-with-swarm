@@ -82,13 +82,13 @@ update ()
     (cd ~/update
         export STEP_NUMBER=${1}
         docker stack deploy -c update.yaml ov
-    )
-    sleep 5
-    while test $(docker service ls --filter NAME=ov_update --format "{{.Replicas}}") == '1/1'; do
         sleep 5
-    done
-    docker service logs ov_update
-    docker service rm ov_update
+        while test $(docker service ls --filter NAME=ov_update --format "{{.Replicas}}") == '1/1'; do
+            sleep 5
+        done
+        docker service logs ov_update
+        docker service rm ov_update
+    )
 }
 case ${1} in
     init)
@@ -125,10 +125,10 @@ case ${1} in
                 sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
                 export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
                 docker-compose up -d
+                docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
+                docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
+                docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
             )
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
         elif [[ ${2} == '2' ]]; then
             (cd ~/add
                 export STEP_NUMBER=${2}
