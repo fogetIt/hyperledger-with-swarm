@@ -67,6 +67,29 @@ clear_volumes ()
         docker volume rm ${sshfs_volumes}
     fi
 }
+add ()
+{
+    # on ext node
+    (cd ~/add
+        export STEP_NUMBER=${1}
+        docker-compose -f add.yaml up
+        docker-compose -f add.yaml rm -f
+    )
+}
+update ()
+{
+    # on manager node
+    (cd ~/update
+        export STEP_NUMBER=${1}
+        docker stack deploy -c update.yaml ov
+    )
+    sleep 5
+    while test $(docker service ls --filter NAME=ov_cli_update --format "{{.Replicas}}") != '1/1'; do
+        sleep 5
+    done
+    docker service logs ov_cli_update --raw
+    docker service rm ov_cli_update
+}
 case ${1} in
     init)
         # on ext node
@@ -90,40 +113,28 @@ case ${1} in
     ;;
     add)
         # on ext node
-        (cd ~/add
-            sed -i s/{{DOMAIN}}/ext/g configtx.yaml
-            sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
-            docker-compose -f add.yaml up
-            docker-compose -f add.yaml rm -f
-            sudo chmod -R 777 crypto-config channel-artifacts
-            sudo chown -R ${USER} crypto-config channel-artifacts
-            sudo chgrp -R staff crypto-config channel-artifacts
-            sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
-            export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
-            docker-compose up -d
-        )
-        docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
-        docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
-        docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
+        export CC_TEST=${3:-'true'}
+        if [[ ${2} == '1' ]]; then
+            (cd ~/add
+                sed -i s/{{DOMAIN}}/ext/g configtx.yaml
+                sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
+                add ${2}
+                sudo chmod -R 777 crypto-config channel-artifacts
+                sudo chown -R ${USER} crypto-config channel-artifacts
+                sudo chgrp -R staff crypto-config channel-artifacts
+                sed -i s/{{DOMAIN}}/ext/g docker-compose.yml
+                export CA_KEYFILE=$(ls -1 crypto-config/peerOrganizations/ext.com/ca/*_sk | cut -d / -f 5)
+                docker-compose up -d
+            )
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
+        else
+            add ${2}
+        fi
     ;;
     update)
         # on manager node
-        (cd ~/update
-            docker stack deploy -c update.yaml ov
-        )
-        sleep 5
-        while test $(docker service ls --filter NAME=ov_cli_update --format "{{.Replicas}}") != '1/1'; do
-            sleep 5
-        done
-        docker service logs ov_cli_update --raw
-    ;;
-    ext)
-        # on ext node
-        (cd ~/add
-            export CC_TEST=${2:-'true'}
-            docker-compose -f ext.yaml up
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ov_ext
-            docker-compose -f ext.yaml rm -f
-        )
+        update ${2}
     ;;
 esac

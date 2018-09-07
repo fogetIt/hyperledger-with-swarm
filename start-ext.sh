@@ -26,7 +26,7 @@ case ${1} in
         pushd ext
             docker-machine ssh ext 'if [ -d add ]; then rm -rf add; fi'
             docker-machine scp -r -q ${USER}@localhost:add docker@ext:add
-            docker-machine ssh ext sh -s < script.sh add
+            docker-machine ssh ext sh -s < script.sh add '1'
 
             docker-machine ssh manager 'if [ -d update ]; then rm -rf update; fi'
             docker-machine scp -r -q ${USER}@localhost:update docker@manager:update
@@ -34,12 +34,22 @@ case ${1} in
             docker-machine scp -r -q docker@ext:add/channel-artifacts/ext.json ${HOME}/tmp/
             docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ext.json docker@manager:update/channel-artifacts/
 
-            docker-machine ssh manager sh -s < script.sh update
+            docker-machine ssh manager sh -s < script.sh update '1'
 
-            docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ${HOME}/tmp/
-            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ordererOrganizations docker@ext:add/crypto-config/
 
-            docker-machine ssh ext sh -s < script.sh ext ${2:-'true'}
+            docker-machine ssh ext sh -s < script.sh add '2' ${2:-'true'}
+            if [[ ${2} == 'true' ]]; then
+                docker-machine ssh manager sh -s < script.sh update '2'
+                docker-machine ssh ext sh -s < script.sh add '3'
+                docker-machine ssh manager sh -s < script.sh update '3'
+                docker-machine ssh ext sh -s < script.sh add '4'
+                docker-machine ssh manager sh -s < script.sh update '4'
+            fi
+
+            # docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ${HOME}/tmp/
+            # docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ordererOrganizations docker@ext:add/crypto-config/
+
+            # docker-machine ssh ext sh -s < script.sh ext ${2:-'true'}
         popd
     ;;
 esac

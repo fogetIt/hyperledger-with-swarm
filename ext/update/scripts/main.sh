@@ -22,28 +22,33 @@ echo "Extend your first network (EYFN) test"
 echo
 set_orderer_globals
 export SLEEP_DELAY=3
-if [ ${STEP_NUMBER} == 1 ]; then
-    update_channel_configure
-elif [ ${STEP_NUMBER} == 2 ]; then
-    info_log "Install chaincode 2.0 on orgs peer0..."
-	(
-		org=zjhl;peer=peer0;set_peer_globals;install_chaincode 2.0
-	)
-	info_log "Upgrading chaincode on peer0.zjhl"
-	(
-	    org=zjhl;peer=peer0;set_peer_globals;upgrade_chaincode
-	)
-elif [ ${STEP_NUMBER} == 3 ]; then
-	info_log "Sending invoke transaction on orgs peer0..."
-	(
-	    chaincode_invoke peer0 zjhl
-	)
-elif [ ${STEP_NUMBER} == 4 ]; then
-    info_log "Querying chaincode on orgs peer0..."
-	(
-		org=zjhl;peer=peer0;set_peer_globals;chaincode_query 80
-	)
-fi
+case ${STEP_NUMBER} in
+	'1')
+    	update_channel_configure
+	;;
+	'2')
+		info_log "Install chaincode 2.0 on orgs peer0..."
+		(
+			org=zjhl;peer=peer0;set_peer_globals;install_chaincode 2.0
+		)
+		info_log "Upgrading chaincode on peer0.zjhl"
+		(
+			org=zjhl;peer=peer0;set_peer_globals;upgrade_chaincode
+		)
+	;;
+	'3')
+		info_log "Sending invoke transaction on orgs peer0..."
+		(
+			chaincode_invoke peer0 zjhl
+		)
+	;;
+	'4')
+		info_log "Querying chaincode on orgs peer0..."
+		(
+			org=zjhl;peer=peer0;set_peer_globals;chaincode_query 80
+		)
+	;;
+esac
 echo
 echo "========= All GOOD, EYFN test execution completed =========== "
 echo
