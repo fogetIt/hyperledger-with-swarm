@@ -7,12 +7,24 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GOPATH=/opt/gopath
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric
-      - CHANNEL_NAME=mychannel
-      - CORE_LOGGING_LEVEL=info
-    working_dir: /etc/hyperledger/fabric
-    command: sh -c 'cryptogen generate --config=./crypto-config.yaml && configtxgen -printOrg extMSP > ./channel-artifacts/ext.json'
+      - CORE_LOGGING_LEVEL=${LOG_LEVEL}
+      - CORE_PEER_ID=cli
+      - CORE_PEER_TLS_ENABLED=true
+      - STEP_NUMBER=${STEP_NUMBER}
+
+      - CHANNEL_NAME=${CHANNEL_NAME}
+      - CHANNEL_CREATE_TIMEOUT=20
+      - CHANNEL_JOIN_COUNTER=1
+      - CHANNEL_JOIN_MAX_RETRY=5
+      - CC_TEST=${CC_TEST}
+      - CC_LANGUAGE=golang
+      - CC_QUERY_TIMEOUT=10
+    working_dir: /etc/hyperledger/fabric/scripts
+    command: '/bin/bash main.sh'
     volumes:
       - ./crypto-config.yaml:/etc/hyperledger/fabric/crypto-config.yaml
       - ./configtx.yaml:/etc/hyperledger/fabric/configtx.yaml
       - ./crypto-config:/etc/hyperledger/fabric/crypto-config
       - ./channel-artifacts:/etc/hyperledger/fabric/channel-artifacts
+      - ./scripts:/etc/hyperledger/fabric/scripts
+      - ./chaincode:/etc/hyperledger/fabric/chaincode

@@ -31,3 +31,17 @@ set_peer_globals ()
     export CORE_PEER_TLS_CERT_FILE="${ORG}/peers/${peer}.${org}.com/tls/server.crt"
 	export CORE_PEER_TLS_ROOTCERT_FILE="${ORG}/peers/${peer}.${org}.com/tls/ca.crt"
 }
+join_channel_with_retry ()
+{
+	peer channel join -b ${CHANNEL_NAME}.block
+	if [ $? -ne 0 -a ${CHANNEL_JOIN_COUNTER} -lt ${CHANNEL_JOIN_MAX_RETRY} ]; then
+		COUNTER=` expr ${CHANNEL_JOIN_COUNTER} + 1`
+		warn_log "${peer}.${org} join to ${CHANNEL_NAME} failed, retry after ${SLEEP_DELAY} seconds"
+		sleep ${SLEEP_DELAY}
+		join_channel_with_retry
+	else
+		COUNTER=1
+	fi
+	info_log "${peer}.${org} join ${CHANNEL_NAME} successful"
+	sleep ${SLEEP_DELAY}
+}

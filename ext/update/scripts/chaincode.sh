@@ -22,6 +22,13 @@ install_chaincode ()
 	peer chaincode install -n mycc -v ${VERSION} -l ${CC_LANGUAGE} -p ${CC_SRC_PATH}
 	info_log "Chaincode is installed on ${peer}.${org}"
 }
+upgrade_chaincode ()
+{
+    peer chaincode upgrade \
+        -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CA} -C ${CHANNEL_NAME} -n mycc -v 2.0 \
+        -c '{"Args":["init","a","90","b","210"]}' -P "AND ('zjhlMSP.peer','extMSP.peer')"
+    info_log "Chaincode is upgraded on ${peer}.${org} successfully"
+}
 chaincode_query ()
 {
 	set +e

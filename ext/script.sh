@@ -93,8 +93,8 @@ case ${1} in
         (cd ~/add
             sed -i s/{{DOMAIN}}/ext/g configtx.yaml
             sed -i s/{{DOMAIN}}/ext/g crypto-config.yaml
-            docker-compose -f fabric-cli.yaml up
-            docker-compose -f fabric-cli.yaml rm -f
+            docker-compose -f add.yaml up
+            docker-compose -f add.yaml rm -f
             sudo chmod -R 777 crypto-config channel-artifacts
             sudo chown -R ${USER} crypto-config channel-artifacts
             sudo chgrp -R staff crypto-config channel-artifacts
@@ -109,7 +109,7 @@ case ${1} in
     update)
         # on manager node
         (cd ~/update
-            docker stack deploy -c fabric-cli.yaml ov
+            docker stack deploy -c update.yaml ov
         )
         sleep 5
         while test $(docker service ls --filter NAME=ov_cli_update --format "{{.Replicas}}") != '1/1'; do

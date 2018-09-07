@@ -22,16 +22,20 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GOPATH=/opt/gopath
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric
-      - CHANNEL_CREATE_TIMEOUT=20
-      - CHANNEL_NAME=${CHANNEL_NAME}
       - CORE_LOGGING_LEVEL=${LOG_LEVEL}
       - CORE_PEER_ID=cli
       - CORE_PEER_TLS_ENABLED=true
-    # crypto-config.yaml
-    working_dir: /etc/hyperledger/fabric
+      - STEP_NUMBER=${STEP_NUMBER}
+
+      - CHANNEL_NAME=${CHANNEL_NAME}
+      - CHANNEL_CREATE_TIMEOUT=20
+      - CC_LANGUAGE=golang
+      - CC_QUERY_TIMEOUT=10
+    working_dir: /etc/hyperledger/fabric/scripts
     command: '/bin/bash main.sh'
     volumes:
-      - ./main.sh:/etc/hyperledger/fabric/main.sh
+      - ./scripts:/etc/hyperledger/fabric/scripts
+      - ./chaincode:/etc/hyperledger/fabric/chaincode
       - ~/fabric/crypto-config:/etc/hyperledger/fabric/crypto-config
       - ./channel-artifacts:/etc/hyperledger/fabric/channel-artifacts
     networks:
