@@ -6,13 +6,11 @@ FABRIC_CFG_PATH
 CHANNEL_NAME
 STEP_NUMBER
 COMMIT
-set +e
+set -e
 apt -y update
 apt -y install jq
-set -e
 source utils.sh
 source chaincode.sh
-set -e
 echo
 echo " ____    _____      _      ____    _____ "
 echo "/ ___|  |_   _|    / \    |  _ \  |_   _|"
