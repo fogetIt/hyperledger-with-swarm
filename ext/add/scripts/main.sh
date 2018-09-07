@@ -24,8 +24,10 @@ set_orderer_globals
 export SLEEP_DELAY=3
 case ${STEP_NUMBER} in
 	'1')
-		cryptogen generate --config=./crypto-config.yaml
-		configtxgen -printOrg extMSP > ./channel-artifacts/ext.json
+		pushd ${FABRIC_CFG_PATH}
+			cryptogen generate --config=./crypto-config.yaml
+			configtxgen -printOrg extMSP > ./channel-artifacts/ext.json
+		popd
 	;;
 	'2')
 		pushd "${FABRIC_CFG_PATH}/channel-artifacts"
