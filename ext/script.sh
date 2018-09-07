@@ -129,6 +129,9 @@ case ${1} in
             docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ca.ext.com
             docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
             docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
+        elif [[ ${2} == '2' ]]; then
+            add ${2}
+            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ov_add
         else
             add ${2}
         fi

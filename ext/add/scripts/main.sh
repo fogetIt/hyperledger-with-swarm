@@ -30,6 +30,7 @@ case ${STEP_NUMBER} in
 		popd
 	;;
 	'2')
+		/bin/bash wait-for orderer0.orderers.com:7050 -t 10 -- sleep 1
 		pushd "${FABRIC_CFG_PATH}/channel-artifacts"
 			info_log "Fetching channel config block from orderer..."
 			(
