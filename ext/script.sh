@@ -82,7 +82,9 @@ update ()
     (cd ~/update
         export STEP_NUMBER=${1}
         docker stack deploy -c update.yaml ov
-        sleep 5
+        while test $(docker service ls --filter NAME=ov_update --format "{{.Replicas}}") == '0/1'; do
+            sleep 5
+        done
         while test $(docker service ls --filter NAME=ov_update --format "{{.Replicas}}") == '1/1'; do
             sleep 5
         done
