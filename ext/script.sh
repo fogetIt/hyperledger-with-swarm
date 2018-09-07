@@ -130,8 +130,16 @@ case ${1} in
             docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} peer0.ext.com
             docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} couchdb0.ext.com
         elif [[ ${2} == '2' ]]; then
-            add ${2}
-            docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ov_add
+            (cd ~/add
+                export STEP_NUMBER=${2}
+                docker-compose -f add.yaml up -d
+                docker network connect ${COMPOSE_PROJECT_NAME}_${NETWORK_NAME} ov_add
+                while ! docker ps -a --filter NAME=ov_add --format "{{.Status}}" | grep 'Exited'; do
+                    sleep 5
+                done
+                docker logs ov_add
+                docker-compose -f add.yaml rm -f
+            )
         else
             add ${2}
         fi
