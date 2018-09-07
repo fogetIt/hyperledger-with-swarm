@@ -36,7 +36,8 @@ case ${1} in
 
             docker-machine ssh manager sh -s < script.sh update '1'
 
-
+            docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ${HOME}/tmp/
+            docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ordererOrganizations docker@ext:add/crypto-config/
             docker-machine ssh ext sh -s < script.sh add '2' ${2:-'true'}
             if [[ ${2} == 'true' ]]; then
                 docker-machine ssh manager sh -s < script.sh update '2'
@@ -45,11 +46,6 @@ case ${1} in
                 docker-machine ssh ext sh -s < script.sh add '4'
                 docker-machine ssh manager sh -s < script.sh update '4'
             fi
-
-            # docker-machine scp -r -q docker@manager:fabric/crypto-config/ordererOrganizations ${HOME}/tmp/
-            # docker-machine scp -r -q ${USER}@localhost:${HOME}/tmp/ordererOrganizations docker@ext:add/crypto-config/
-
-            # docker-machine ssh ext sh -s < script.sh ext ${2:-'true'}
         popd
     ;;
 esac
