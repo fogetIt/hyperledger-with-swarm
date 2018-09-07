@@ -31,7 +31,7 @@ case ${STEP_NUMBER} in
 	;;
 	'2')
 		sleep 10
-		/bin/bash wait-for orderer0.orderers.com:7050 -t 600 -- sleep 1
+		/bin/bash wait-for orderer0.orderers.com:7050 -t 600 -- sleep 100
 		pushd "${FABRIC_CFG_PATH}/channel-artifacts"
 			info_log "Fetching channel config block from orderer..."
 			(
