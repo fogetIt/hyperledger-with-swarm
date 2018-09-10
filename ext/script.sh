@@ -73,7 +73,7 @@ add ()
     (cd ~/add
         export STEP_NUMBER=${1}
         docker-compose -f add.yaml up
-        docker-compose -f add.yaml rm -f
+        # docker-compose -f add.yaml rm
     )
 }
 update ()

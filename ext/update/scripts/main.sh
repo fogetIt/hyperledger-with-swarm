@@ -6,10 +6,6 @@ FABRIC_CFG_PATH
 CHANNEL_NAME
 STEP_NUMBER
 COMMIT
-set +e
-apt -y update
-apt -y install jq
-set -e
 source utils.sh
 source chaincode.sh
 set -e
@@ -26,6 +22,10 @@ set_orderer_globals
 export SLEEP_DELAY=3
 case ${STEP_NUMBER} in
 	'1')
+		set +e
+		apt -y update
+		apt -y install jq
+		set -e
     	update_channel_configure
 	;;
 	'2')
