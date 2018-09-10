@@ -28,6 +28,8 @@
 #         不改变现有网络基础设施，通过某种约定通信协议，把二层报文封装在 IP 报文之上
 #         一代 Swarm 已经不再使用，它要求使用 overlay 网络前先准备好分布式键值库(etcd/consul/zookeeper)
 #         二代 Docker Swarm Mode，只要 init 建立集群，其它节点 join 后，集群内的服务就自动建立了 overlay 网络互联能力
+#             默认的 ingress 网络会自动伸缩至每一个加入集群的主机
+#             自定义的 overlay 网络并不扩展到那些没有运行服务任务的 worker 节点上
 #     bridge 网络
 #         将单个的 docker 守护进程连接到 swarm 中的其他守护进程
     # hostname: kafka{{INDEX}}.{{ORDERERS_DOMAIN}}.com
