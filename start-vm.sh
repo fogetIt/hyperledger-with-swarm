@@ -39,8 +39,6 @@ case ${1} in
         docker-machine ssh manager "docker swarm init --advertise-addr ${manager_host}"
         docker-machine ssh worker1
         docker-machine ssh worker2
-        /bin/bash start-ext.sh init
-        docker-machine ssh ext
     ;;
     down)
         if [[ ! -z $(docker-machine ssh manager 'docker service ls -q') ]]; then
@@ -51,7 +49,6 @@ case ${1} in
             docker-machine ssh worker1 sh -s < script.sh down
             docker-machine ssh worker2 sh -s < script.sh down
         popd
-        /bin/bash start-ext.sh down
     ;;
     up)
         python templates/build.py

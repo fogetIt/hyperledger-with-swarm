@@ -16,6 +16,7 @@ case ${1} in
         pushd ext
             docker-machine ssh ext sh -s < script.sh init
         popd
+        docker-machine ssh ext
     ;;
     down)
         pushd ext
