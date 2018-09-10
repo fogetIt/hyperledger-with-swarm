@@ -12,11 +12,11 @@ set -e
 source utils.sh
 source chaincode.sh
 echo
-echo " ____    _____      _      ____    _____ "
-echo "/ ___|  |_   _|    / \    |  _ \  |_   _|"
-echo "\___ \    | |     / _ \   | |_) |   | |  "
-echo " ___) |   | |    / ___ \  |  _ <    | |  "
-echo "|____/    |_|   /_/   \_\ |_| \_\   |_|  "
+echo "    _      ____    ____   "
+echo "   / \    |  _ \  |  _ \  "
+echo "  / _ \   | | | | | | | | "
+echo " / ___ \  | |_| | | |_| | "
+echo "/_/   \_\ |____/  |____/  "
 echo
 echo "Extend your first network (EYFN) test"
 echo

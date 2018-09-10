@@ -14,11 +14,11 @@ source utils.sh
 source chaincode.sh
 set -e
 echo
-echo " ____    _____      _      ____    _____ "
-echo "/ ___|  |_   _|    / \    |  _ \  |_   _|"
-echo "\___ \    | |     / _ \   | |_) |   | |  "
-echo " ___) |   | |    / ___ \  |  _ <    | |  "
-echo "|____/    |_|   /_/   \_\ |_| \_\   |_|  "
+echo " _   _   ____    ____       _      _____   _____  "
+echo "| | | | |  _ \  |  _ \     / \    |_   _| | ____| "
+echo "| | | | | |_) | | | | |   / _ \     | |   |  _|   "
+echo "| |_| | | |__/  | |_| |  / ___ \    | |   | |___  "
+echo " \___/  |_|     |____/  /_/   \_\   |_|   |_____| "
 echo
 echo "Extend your first network (EYFN) test"
 echo
